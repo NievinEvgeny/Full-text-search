@@ -1,11 +1,24 @@
+#include <cxxopts.hpp>
 #include <external/ftslib/fts.hpp>
 #include <iostream>
 
-int main()
+int main(int argc, char** argv)
 {
-    float a = 3, b = 4;
-    float res;
-    res = sum(a, b);
-    std::cout << res << "\n";
+    cxxopts::Options options("sum");
+
+    options.add_options()("first,first_number", "any number", cxxopts::value<float>())(
+        "second,second_number", "any number", cxxopts::value<float>);
+
+    const auto result = options.parse(argc, argv);
+
+    if ((result.count("first") != 1) || (result.count("second") != 1))
+    {
+        std::cout << options.help() << "\n";
+        return 0;
+    }
+
+    const auto first_num = result["first"].as<float>();
+    const auto second_num = result["second"].as<float>();
+    std::cout << fts::sum(first_num, second_num) << "\n";
     return 0;
 }
