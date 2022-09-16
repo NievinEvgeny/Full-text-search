@@ -6,14 +6,14 @@ include(CompileOptions)
 set_compile_options(${target_name})
 
 target_sources(
-  ${target_name}
-  PRIVATE
+    ${target_name}
+    PRIVATE
     main.cxx
 )
 
 target_link_libraries(
-  ${target_name}
-  PRIVATE
+    ${target_name}
+    PRIVATE
     fts
     cxxopts
 )
