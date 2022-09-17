@@ -14,7 +14,7 @@ Checks: |
   -cppcoreguidelines-avoid-magic-number,
   -readability-magic-numbers
 WarningsAsErrors: true
-HeaderFilterRegex: ''
+HeaderFilterRegex: 'fts/'
 AnalyzeTemporaryDtors: false
 FormatStyle:     file
 CheckOptions:
