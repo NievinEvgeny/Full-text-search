@@ -17,3 +17,5 @@ target_link_libraries(
     fts
     cxxopts
 )
+
+add_subdirectory(fts)
