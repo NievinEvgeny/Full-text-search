@@ -1,7 +1,8 @@
 set(target_name fts)
 
 add_library(${target_name} STATIC
-    fts.cxx)
+    fts.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/fts.hpp)
 
 include(CompileOptions)
 set_compile_options(${target_name})
@@ -9,5 +10,5 @@ set_compile_options(${target_name})
 target_include_directories(
     ${target_name}
     PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}
+    ${PROJECT_SOURCE_DIR}/include/fts/
 )
