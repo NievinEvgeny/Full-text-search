@@ -19,6 +19,6 @@ int main(int argc, char** argv)
 
     const auto first_num = result["first"].as<float>();
     const auto second_num = result["second"].as<float>();
-    std::cout << sum(first_num, second_num) << "\n";
+    std::cout << fts::sum(first_num, second_num) << "\n";
     return 0;
 }
