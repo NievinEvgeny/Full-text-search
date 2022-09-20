@@ -1,13 +1,16 @@
-#include <cxxopts.hpp>
 #include <fts.hpp>
+#include <cxxopts.hpp>
 #include <iostream>
 
 int main(int argc, char** argv)
 {
     cxxopts::Options options("sum");
 
-    options.add_options()("first,first_number", "any number", cxxopts::value<float>())(
-        "second,second_number", "any number", cxxopts::value<float>());
+    // clang-format off
+    options.add_options()
+    ("first,first_number", "any number", cxxopts::value<float>())
+    ("second,second_number", "any number", cxxopts::value<float>());
+    // clang-format on
 
     const auto result = options.parse(argc, argv);
 

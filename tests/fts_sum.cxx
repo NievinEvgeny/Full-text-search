@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <fts.hpp>
+#include <gtest/gtest.h>
 
 TEST(SumTest, Sum)
 {
