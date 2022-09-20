@@ -10,5 +10,5 @@ set_compile_options(${target_name})
 target_include_directories(
     ${target_name}
     PUBLIC
-    ${PROJECT_SOURCE_DIR}/include/fts/
+    ${PROJECT_SOURCE_DIR}/include/
 )

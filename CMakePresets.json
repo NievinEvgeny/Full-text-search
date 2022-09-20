@@ -32,7 +32,7 @@
             "inherits": "base",
             "binaryDir": "${sourceDir}/build/test",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Test"
+                "CMAKE_BUILD_TYPE": "Release"
             }
         }
     ],
@@ -50,7 +50,8 @@
         {
             "name": "test",
             "configurePreset": "test",
-            "jobs": 4
+            "jobs": 4,
+            "targets": "tests"
         }
     ]
 }
