@@ -1,4 +1,4 @@
-#include <fts.hpp>
+#include <fts/fts.hpp>
 
 namespace fts {
 
