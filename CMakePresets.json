@@ -53,5 +53,14 @@
             "jobs": 4,
             "targets": "tests"
         }
+    ],
+    "testPresets": [
+        {
+            "name": "test",
+            "configurePreset": "test",
+            "execution": {
+                "jobs": 4
+            }
+        }
     ]
 }

@@ -1,7 +1,5 @@
 set(target_name tests)
 
-enable_testing()
-
 add_executable(
     ${target_name}
     fts_sum.cxx
