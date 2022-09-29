@@ -14,6 +14,7 @@ Checks: |
   -cppcoreguidelines-avoid-magic-number,
   -readability-magic-numbers,
   -bugprone-exception-escape,
+  -bugprone-easily-swappable-parameters,
   -readability-identifier-length,
   -llvm-include-order
 WarningsAsErrors: true

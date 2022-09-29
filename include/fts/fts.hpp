@@ -1,7 +1,16 @@
 #pragma once
+#include <iostream>
+#include <vector>
 
 namespace fts {
 
-float sum(float a, float b);
+void parse_config(
+    const std::string& config_filename,
+    std::string& text,
+    std::vector<std::string>& stop_words,
+    int ngram_min_length,
+    int ngram_max_length);
+
+void run_parser(const std::string& filename);
 
 }  // namespace fts

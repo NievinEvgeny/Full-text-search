@@ -7,6 +7,12 @@ add_library(${target_name} STATIC
 include(CompileOptions)
 set_compile_options(${target_name})
 
+target_link_libraries(
+    ${target_name}
+    PRIVATE
+    nlohmann_json::nlohmann_json
+)
+
 target_include_directories(
     ${target_name}
     PUBLIC
