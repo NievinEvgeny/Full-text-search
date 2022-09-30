@@ -19,6 +19,7 @@ void parse_config(
     if (ngram_min_length < 1)
     {
         throw "Ngram min length is below 1";
+        return;
     }
     ngram_max_length = parsed_config.at("ngram_max_length");
     text = parsed_config.at("text");
@@ -39,6 +40,7 @@ void run_parser(const std::string& config_filename)
     catch (const char* exception)
     {
         std::cerr << exception << '\n';
+        return;
     }
 }
 
