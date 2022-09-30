@@ -67,6 +67,10 @@ std::vector<std::string> string_tokenization(std::string& text)
     {
         if (isspace(text[i]) || (text[i] == '\0'))
         {
+            if (token.empty())
+            {
+                continue;
+            }
             text_tokens.push_back(token);
             token.erase();
         }
@@ -93,6 +97,12 @@ void run_parser(const std::string& config_filename)
     remove_punctuation(text);
     char_to_lower_case(text);
     text_tokens = string_tokenization(text);
+
+    if (text_tokens.empty())
+    {
+        throw "No relevant words in search string";
+        return;
+    }
 }
 
 }  // namespace fts
