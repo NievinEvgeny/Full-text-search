@@ -160,6 +160,12 @@ void run_parser(const std::string& config_filename)
 
     ngrams = ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
 
+    if (ngrams.empty())
+    {
+        throw "No words that can be used to generate ngrams";
+        return;
+    }
+
     for (auto& ngram : ngrams)
     {
         std::cout << ngram.word << ' ';
