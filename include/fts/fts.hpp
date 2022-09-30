@@ -12,7 +12,7 @@ typedef struct
 
 void char_to_lower_case(std::string& text);
 
-void remove_puctuation(std::string& text);
+void remove_punctuation(std::string& text);
 
 int parse_config(
     const std::string& config_filename,
