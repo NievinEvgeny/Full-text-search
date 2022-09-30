@@ -5,7 +5,7 @@
 
 namespace fts {
 
-void parse_config(
+int parse_config(
     const std::string& config_filename,
     std::string& text,
     std::vector<std::string>& stop_words,
@@ -19,11 +19,25 @@ void parse_config(
     if (ngram_min_length < 1)
     {
         throw "Ngram min length is below 1";
-        return;
+        return -1;
     }
+
     ngram_max_length = parsed_config.at("ngram_max_length");
+    if (ngram_max_length < ngram_min_length)
+    {
+        throw "Max length of ngram less than min length";
+        return -1;
+    }
+
     text = parsed_config.at("text");
+    if (text.empty())
+    {
+        throw "Search string is empty";
+        return -1;
+    }
+
     stop_words = parsed_config.at("stop_words");
+    return 0;
 }
 
 void run_parser(const std::string& config_filename)
@@ -33,13 +47,8 @@ void run_parser(const std::string& config_filename)
     int ngram_min_length;
     int ngram_max_length;
 
-    try
+    if (parse_config(config_filename, text, stop_words, ngram_min_length, ngram_max_length) == -1)
     {
-        parse_config(config_filename, text, stop_words, ngram_min_length, ngram_max_length);
-    }
-    catch (const char* exception)
-    {
-        std::cerr << exception << '\n';
         return;
     }
 }

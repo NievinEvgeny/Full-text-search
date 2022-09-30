@@ -4,7 +4,7 @@
 
 namespace fts {
 
-void parse_config(
+int parse_config(
     const std::string& config_filename,
     std::string& text,
     std::vector<std::string>& stop_words,
