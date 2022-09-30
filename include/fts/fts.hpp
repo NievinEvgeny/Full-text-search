@@ -15,6 +15,8 @@ int parse_config(
     int ngram_min_length,
     int ngram_max_length);
 
+std::vector<std::string> string_tokenization(std::string& text);
+
 void run_parser(const std::string& filename);
 
 }  // namespace fts

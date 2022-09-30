@@ -58,12 +58,33 @@ int parse_config(
     return 0;
 }
 
+std::vector<std::string> string_tokenization(std::string& text)
+{
+    std::vector<std::string> text_tokens;
+    std::string token;
+    int text_length = text.length();
+    for (int i = 0; i <= text_length; i++)
+    {
+        if (isspace(text[i]) || (text[i] == '\0'))
+        {
+            text_tokens.push_back(token);
+            token.erase();
+        }
+        else
+        {
+            token += text[i];
+        }
+    }
+    return text_tokens;
+}
+
 void run_parser(const std::string& config_filename)
 {
     std::string text;
     std::vector<std::string> stop_words;
     int ngram_min_length;
     int ngram_max_length;
+    std::vector<std::string> text_tokens;
 
     if (parse_config(config_filename, text, stop_words, ngram_min_length, ngram_max_length) == -1)
     {
@@ -71,6 +92,7 @@ void run_parser(const std::string& config_filename)
     }
     remove_puctuation(text);
     char_to_lower_case(text);
+    text_tokens = string_tokenization(text);
 }
 
 }  // namespace fts
