@@ -2,8 +2,21 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <vector>
+#include <string>
+#include <cctype>
 
 namespace fts {
+
+void remove_puctuation(std::string& text)
+{
+    for (int i = text.size() - 1; i >= 0; i--)
+    {
+        if (ispunct(text[i]))
+        {
+            text.erase(i, 1);
+        }
+    }
+}
 
 int parse_config(
     const std::string& config_filename,
@@ -51,6 +64,8 @@ void run_parser(const std::string& config_filename)
     {
         return;
     }
+
+    remove_puctuation(text);
 }
 
 }  // namespace fts

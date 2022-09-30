@@ -5,6 +5,8 @@ Checks: |
   *,
   -fuchsia-*,
   -llvmlibc-*,
+  -altera-*,
+  -readability-implicit-bool-conversion,
   -llvm-header-guard,
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
