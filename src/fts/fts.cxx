@@ -14,7 +14,7 @@ void char_to_lower_case(std::string& text)
 
 void remove_punctuation(std::string& text)
 {
-    for (int i = text.size() - 1; i >= 0; i--)
+    for (int i = static_cast<int>(text.size()) - 1; i >= 0; i--)
     {
         if (ispunct(text[i]))
         {
@@ -27,8 +27,8 @@ int parse_config(
     const std::string& config_filename,
     std::string& text,
     std::vector<std::string>& stop_words,
-    int ngram_min_length,
-    int ngram_max_length)
+    int& ngram_min_length,
+    int& ngram_max_length)
 {
     std::ifstream conf_file(config_filename);
     nlohmann::json parsed_config = nlohmann::json::parse(conf_file);
@@ -62,7 +62,7 @@ std::vector<std::string> string_tokenization(std::string& text)
 {
     std::vector<std::string> text_tokens;
     std::string token;
-    int text_length = text.length();
+    int text_length = static_cast<int>(text.length());
     for (int i = 0; i <= text_length; i++)
     {
         if (isspace(text[i]) || (text[i] == '\0'))
@@ -84,11 +84,11 @@ std::vector<std::string> string_tokenization(std::string& text)
 
 void delete_stop_words(std::vector<std::string>& text_tokens, std::vector<std::string>& stop_words)
 {
-    for (long unsigned int i = 0; i < text_tokens.size(); i++)
+    for (int i = 0; i < static_cast<int>(text_tokens.size()); i++)
     {
-        for (long unsigned int j = 0; j < stop_words.size(); j++)
+        for (auto& stop_word : stop_words)
         {
-            if (text_tokens[i] == stop_words[j])
+            if (text_tokens[i] == stop_word)
             {
                 text_tokens.erase(text_tokens.begin() + i);
                 i--;
@@ -98,6 +98,35 @@ void delete_stop_words(std::vector<std::string>& text_tokens, std::vector<std::s
     }
 }
 
+std::vector<ngram> ngram_generation(std::vector<std::string>& text_tokens, int ngram_min_length, int ngram_max_length)
+{
+    std::vector<ngram> ngrams;
+    int index = 0;
+
+    for (auto& text_token : text_tokens)
+    {
+        if (static_cast<int>(text_token.size()) < ngram_min_length)
+        {
+            continue;
+        }
+
+        if (ngram_max_length > static_cast<int>(text_token.size()))
+        {
+            ngram_max_length = static_cast<int>(text_token.size());
+        }
+
+        for (int j = ngram_min_length; j <= ngram_max_length; j++)
+        {
+            ngram temp_ngram;
+            temp_ngram.index = index;
+            temp_ngram.word.append(text_token, 0, j);
+            ngrams.push_back(temp_ngram);
+        }
+        index++;
+    }
+    return ngrams;
+}
+
 void run_parser(const std::string& config_filename)
 {
     std::string text;
@@ -105,6 +134,7 @@ void run_parser(const std::string& config_filename)
     int ngram_min_length = 0;
     int ngram_max_length = 0;
     std::vector<std::string> text_tokens;
+    std::vector<ngram> ngrams;
 
     if (parse_config(config_filename, text, stop_words, ngram_min_length, ngram_max_length) == -1)
     {
@@ -127,6 +157,15 @@ void run_parser(const std::string& config_filename)
         throw "No relevant words in search string";
         return;
     }
+
+    ngrams = ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
+
+    for (auto& ngram : ngrams)
+    {
+        std::cout << ngram.word << ' ';
+        std::cout << ngram.index << ' ';
+    }
+    std::cout << '\n';
 }
 
 }  // namespace fts
