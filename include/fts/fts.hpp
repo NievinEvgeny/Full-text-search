@@ -17,6 +17,8 @@ int parse_config(
 
 std::vector<std::string> string_tokenization(std::string& text);
 
+void delete_stop_words(std::vector<std::string>& text_tokens, std::vector<std::string>& stop_words);
+
 void run_parser(const std::string& filename);
 
 }  // namespace fts

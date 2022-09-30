@@ -82,6 +82,22 @@ std::vector<std::string> string_tokenization(std::string& text)
     return text_tokens;
 }
 
+void delete_stop_words(std::vector<std::string>& text_tokens, std::vector<std::string>& stop_words)
+{
+    for (long unsigned int i = 0; i < text_tokens.size(); i++)
+    {
+        for (long unsigned int j = 0; j < stop_words.size(); j++)
+        {
+            if (text_tokens[i] == stop_words[j])
+            {
+                text_tokens.erase(text_tokens.begin() + i);
+                i--;
+                break;
+            }
+        }
+    }
+}
+
 void run_parser(const std::string& config_filename)
 {
     std::string text;
@@ -97,6 +113,14 @@ void run_parser(const std::string& config_filename)
     remove_punctuation(text);
     char_to_lower_case(text);
     text_tokens = string_tokenization(text);
+
+    if (text_tokens.empty())
+    {
+        throw "No relevant words in search string";
+        return;
+    }
+
+    delete_stop_words(text_tokens, stop_words);
 
     if (text_tokens.empty())
     {
