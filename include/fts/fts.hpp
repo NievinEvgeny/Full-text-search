@@ -4,6 +4,8 @@
 
 namespace fts {
 
+void char_to_lower_case(std::string& text);
+
 void remove_puctuation(std::string& text);
 
 int parse_config(

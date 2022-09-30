@@ -7,6 +7,11 @@
 
 namespace fts {
 
+void char_to_lower_case(std::string& text)
+{
+    std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return std::tolower(c); });
+}
+
 void remove_puctuation(std::string& text)
 {
     for (int i = text.size() - 1; i >= 0; i--)
@@ -64,8 +69,8 @@ void run_parser(const std::string& config_filename)
     {
         return;
     }
-
     remove_puctuation(text);
+    char_to_lower_case(text);
 }
 
 }  // namespace fts
