@@ -4,6 +4,8 @@
 
 namespace fts {
 
+void remove_puctuation(std::string& text);
+
 int parse_config(
     const std::string& config_filename,
     std::string& text,
