@@ -15,6 +15,7 @@ Checks: |
   -readability-magic-numbers,
   -bugprone-exception-escape,
   -bugprone-easily-swappable-parameters,
+  -hicpp-exception-baseclass,
   -readability-identifier-length,
   -llvm-include-order
 WarningsAsErrors: true
