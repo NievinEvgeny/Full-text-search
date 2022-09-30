@@ -12,7 +12,7 @@ void char_to_lower_case(std::string& text)
     std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return std::tolower(c); });
 }
 
-void remove_puctuation(std::string& text)
+void remove_punctuation(std::string& text)
 {
     for (int i = text.size() - 1; i >= 0; i--)
     {
@@ -82,15 +82,15 @@ void run_parser(const std::string& config_filename)
 {
     std::string text;
     std::vector<std::string> stop_words;
-    int ngram_min_length;
-    int ngram_max_length;
+    int ngram_min_length = 0;
+    int ngram_max_length = 0;
     std::vector<std::string> text_tokens;
 
     if (parse_config(config_filename, text, stop_words, ngram_min_length, ngram_max_length) == -1)
     {
         return;
     }
-    remove_puctuation(text);
+    remove_punctuation(text);
     char_to_lower_case(text);
     text_tokens = string_tokenization(text);
 }
