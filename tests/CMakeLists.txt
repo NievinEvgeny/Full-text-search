@@ -2,7 +2,7 @@ set(target_name tests)
 
 add_executable(
     ${target_name}
-    fts_sum.cxx
+    fts_parser.cxx
 )
 target_link_libraries(
     ${target_name}

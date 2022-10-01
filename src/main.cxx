@@ -4,24 +4,29 @@
 
 int main(int argc, char** argv)
 {
-    cxxopts::Options options("sum");
+    cxxopts::Options options("TextSearcher");
 
-    // clang-format off
-    options.add_options()
-    ("first,first_number", "any number", cxxopts::value<float>())
-    ("second,second_number", "any number", cxxopts::value<float>());
-    // clang-format on
+    options.add_options()("config,config_file", "Config file name", cxxopts::value<std::string>());
 
-    const auto result = options.parse(argc, argv);
+    const auto parse_cmd_line = options.parse(argc, argv);
 
-    if ((result.count("first") != 1) || (result.count("second") != 1))
+    if (parse_cmd_line.count("config") != 1)
     {
         std::cout << options.help() << "\n";
-        return 0;
+        return -1;
     }
 
-    const auto first_num = result["first"].as<float>();
-    const auto second_num = result["second"].as<float>();
-    std::cout << fts::sum(first_num, second_num) << "\n";
+    const auto config_filename = parse_cmd_line["config"].as<std::string>();
+
+    try
+    {
+        fts::run_parser(config_filename);
+    }
+    catch (const char* exception)
+    {
+        std::cerr << exception << '\n';
+        return -1;
+    }
+
     return 0;
 }
