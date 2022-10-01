@@ -110,10 +110,7 @@ std::vector<ngram> ngram_generation(std::vector<std::string>& text_tokens, int n
             continue;
         }
 
-        if (ngram_max_length > static_cast<int>(text_token.size()))
-        {
-            ngram_max_length = static_cast<int>(text_token.size());
-        }
+        ngram_max_length = std::min(ngram_max_length, static_cast<int>(text_token.size()));
 
         for (int j = ngram_min_length; j <= ngram_max_length; j++)
         {
