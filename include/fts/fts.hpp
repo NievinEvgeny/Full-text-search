@@ -4,11 +4,11 @@
 
 namespace fts {
 
-typedef struct
+struct ngram
 {
     int index;
     std::string word;
-} ngram;
+};
 
 void char_to_lower_case(std::string& text);
 

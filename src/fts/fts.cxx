@@ -65,7 +65,7 @@ std::vector<std::string> string_tokenization(std::string& text)
     int text_length = static_cast<int>(text.length());
     for (int i = 0; i <= text_length; i++)
     {
-        if (isspace(text[i]) || (text[i] == '\0'))
+        if (std::isspace(text[i]) || (text[i] == '\0'))
         {
             if (token.empty())
             {
@@ -114,9 +114,7 @@ std::vector<ngram> ngram_generation(std::vector<std::string>& text_tokens, int n
 
         for (int j = ngram_min_length; j <= ngram_max_length; j++)
         {
-            ngram temp_ngram;
-            temp_ngram.index = index;
-            temp_ngram.word.append(text_token, 0, j);
+            ngram temp_ngram{index, text_token.substr(0, j)};
             ngrams.push_back(temp_ngram);
         }
         index++;
