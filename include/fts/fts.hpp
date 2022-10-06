@@ -34,10 +34,6 @@ struct conf_options
     int ngram_max_length = 0;
 };
 
-void char_to_lower_case(std::string& text);
-
-void remove_punctuation(std::string& text);
-
 int parse_config(const std::string& config_filename, struct conf_options& conf_options);
 
 std::vector<std::string> string_tokenization(std::string& text);

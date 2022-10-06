@@ -8,12 +8,12 @@
 
 namespace fts {
 
-void char_to_lower_case(std::string& text)
+static void char_to_lower_case(std::string& text)
 {
     std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return std::tolower(c); });
 }
 
-void remove_punctuation(std::string& text)
+static void remove_punctuation(std::string& text)
 {
     for (int i = static_cast<int>(text.size()) - 1; i >= 0; i--)
     {
