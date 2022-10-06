@@ -22,9 +22,9 @@ int main(int argc, char** argv)
     {
         fts::run_parser(config_filename);
     }
-    catch (const char* exception)
+    catch (fts::parse_exception& msg)
     {
-        std::cerr << exception << '\n';
+        std::cout << msg.err() << '\n';
         return -1;
     }
 

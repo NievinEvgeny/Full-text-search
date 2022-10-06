@@ -40,17 +40,17 @@ struct conf_options parse_config(const std::string& config_filename)
 
     if (conf_options.ngram_min_length < 1)
     {
-        throw "Ngram min length is below 1";
+        throw parse_exception{"Ngram min length is below 1"};
     }
 
     if (conf_options.ngram_max_length < conf_options.ngram_min_length)
     {
-        throw "Max length of ngram less than min length";
+        throw parse_exception{"Max length of ngram less than min length"};
     }
 
     if (conf_options.text.empty())
     {
-        throw "Search string is empty";
+        throw parse_exception{"Search string is empty"};
     }
 
     return conf_options;
@@ -133,21 +133,21 @@ void run_parser(const std::string& config_filename)
 
     if (text_tokens.empty())
     {
-        throw "No relevant words in search string";
+        throw parse_exception{"No relevant words in search string"};
     }
 
     delete_stop_words(text_tokens, conf_options.stop_words);
 
     if (text_tokens.empty())
     {
-        throw "No relevant words in search string";
+        throw parse_exception{"No relevant words in search string"};
     }
 
     ngrams = ngram_generation(text_tokens, conf_options.ngram_min_length, conf_options.ngram_max_length);
 
     if (ngrams.empty())
     {
-        throw "No words that can be used to generate ngrams";
+        throw parse_exception{"No words that can be used to generate ngrams"};
     }
 
     for (auto& ngram : ngrams)
