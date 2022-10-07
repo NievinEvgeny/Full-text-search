@@ -19,7 +19,7 @@ static void remove_punctuation(std::string& text)
     {
         if (ispunct(text[i]))
         {
-            text.erase(i, 1);
+            text[i] = ' ';
         }
     }
 }
