@@ -1,5 +1,4 @@
 {
-    "text": "Dr. Jekyll and Mr. Hyde",
     "ngram_min_length": 3,
     "ngram_max_length": 6,
     "stop_words": [

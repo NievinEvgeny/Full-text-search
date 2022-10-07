@@ -31,7 +31,6 @@ struct conf_options parse_config(const std::string& config_filename)
 
     // clang-format off
     fts::conf_options conf_options {
-        parsed_config.at("text"),
         parsed_config.at("stop_words"),
         parsed_config.at("ngram_min_length"),
         parsed_config.at("ngram_max_length")
@@ -46,11 +45,6 @@ struct conf_options parse_config(const std::string& config_filename)
     if (conf_options.ngram_max_length < conf_options.ngram_min_length)
     {
         throw parse_exception{"Max length of ngram less than min length"};
-    }
-
-    if (conf_options.text.empty())
-    {
-        throw parse_exception{"Search string is empty"};
     }
 
     return conf_options;
@@ -116,12 +110,12 @@ std::vector<ngram> ngram_generation(std::vector<std::string>& text_tokens, int n
     return ngrams;
 }
 
-void run_parser(const std::string& config_filename)
+void run_parser(const std::string& config_filename, const std::string& text)
 {
     std::vector<std::string> text_tokens;
     std::vector<ngram> ngrams;
     fts::conf_options conf_options = parse_config(config_filename);
-    std::string text_copy = conf_options.text;
+    std::string text_copy = text;
 
     remove_punctuation(text_copy);
     char_to_lower_case(text_copy);
