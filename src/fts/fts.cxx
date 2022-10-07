@@ -8,6 +8,11 @@
 
 namespace fts {
 
+static unsigned char punct_to_space(unsigned char letter)
+{
+    return ispunct(letter) ? ' ' : letter;
+}
+
 static void char_to_lower_case(std::string& text)
 {
     std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return std::tolower(c); });
@@ -15,13 +20,7 @@ static void char_to_lower_case(std::string& text)
 
 static void remove_punctuation(std::string& text)
 {
-    for (int i = static_cast<int>(text.size()) - 1; i >= 0; i--)
-    {
-        if (ispunct(text[i]))
-        {
-            text[i] = ' ';
-        }
-    }
+    std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return fts::punct_to_space(c); });
 }
 
 struct conf_options parse_config(const std::string& config_filename)
@@ -98,9 +97,7 @@ std::vector<ngram> ngram_generation(std::vector<std::string>& text_tokens, int n
             continue;
         }
 
-        ngram_max_length = std::min(ngram_max_length, static_cast<int>(text_token.size()));
-
-        for (int j = ngram_min_length; j <= ngram_max_length; j++)
+        for (int j = ngram_min_length; j <= std::min(ngram_max_length, static_cast<int>(text_token.size())); j++)
         {
             ngram temp_ngram{index, text_token.substr(0, j)};
             ngrams.push_back(temp_ngram);
