@@ -80,18 +80,14 @@ std::vector<std::string> string_tokenization(std::string& text)
     return text_tokens;
 }
 
-void delete_stop_words(std::vector<std::string>& text_tokens, const std::vector<std::string>& stop_words)
+void delete_stop_words(std::vector<std::string>& text_tokens, const std::unordered_set<std::string>& stop_words)
 {
     for (int i = 0; i < static_cast<int>(text_tokens.size()); i++)
     {
-        for (const auto& stop_word : stop_words)
+        if (stop_words.find(text_tokens[i]) != stop_words.end())
         {
-            if (text_tokens[i] == stop_word)
-            {
-                text_tokens.erase(text_tokens.begin() + i);
-                i--;
-                break;
-            }
+            text_tokens.erase(text_tokens.begin() + i);
+            i--;
         }
     }
 }
