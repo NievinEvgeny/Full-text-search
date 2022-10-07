@@ -10,7 +10,7 @@ namespace fts {
 
 static unsigned char punct_to_space(unsigned char letter)
 {
-    return ispunct(letter) ? ' ' : letter;
+    return std::ispunct(letter) ? ' ' : letter;
 }
 
 static void char_to_lower_case(std::string& text)
