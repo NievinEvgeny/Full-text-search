@@ -8,6 +8,11 @@
 
 namespace fts {
 
+static unsigned char punct_to_space(unsigned char letter)
+{
+    return ispunct(letter) ? ' ' : letter;
+}
+
 static void char_to_lower_case(std::string& text)
 {
     std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return std::tolower(c); });
@@ -15,13 +20,7 @@ static void char_to_lower_case(std::string& text)
 
 static void remove_punctuation(std::string& text)
 {
-    for (int i = static_cast<int>(text.size()) - 1; i >= 0; i--)
-    {
-        if (ispunct(text[i]))
-        {
-            text[i] = ' ';
-        }
-    }
+    std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return fts::punct_to_space(c); });
 }
 
 struct conf_options parse_config(const std::string& config_filename)
