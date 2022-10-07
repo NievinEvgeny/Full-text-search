@@ -40,12 +40,14 @@
         {
             "name": "release",
             "configurePreset": "release",
-            "jobs": 4
+            "jobs": 4,
+            "targets": "TextSearcher"
         },
         {
             "name": "debug",
             "configurePreset": "debug",
-            "jobs": 4
+            "jobs": 4,
+            "targets": "TextSearcher"
         },
         {
             "name": "test",

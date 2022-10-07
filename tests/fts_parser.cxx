@@ -68,17 +68,7 @@ TEST(remove_punctuation, only_punct_in_text)
 
 TEST(string_tokenization, simple)
 {
-    std::string one = "dr";
-    std::string two = "jekyll";
-    std::string three = "and";
-    std::string four = "mr";
-    std::string five = "hyde";
-    std::vector<std::string> expect;
-    expect.push_back(one);
-    expect.push_back(two);
-    expect.push_back(three);
-    expect.push_back(four);
-    expect.push_back(five);
+    std::vector<std::string> expect{"dr", "jekyll", "and", "mr", "hyde"};
     std::string text = "dr jekyll and mr hyde";
     std::vector<std::string> real = fts::string_tokenization(text);
     for (int i = 0; i < 5; i++)
@@ -105,17 +95,7 @@ TEST(string_tokenization, empty)
 
 TEST(string_tokenization, white_spaces_everywhere)
 {
-    std::string one = "a";
-    std::string two = "a";
-    std::string three = "a";
-    std::string four = "a";
-    std::string five = "a";
-    std::vector<std::string> expect;
-    expect.push_back(one);
-    expect.push_back(two);
-    expect.push_back(three);
-    expect.push_back(four);
-    expect.push_back(five);
+    std::vector<std::string> expect{5, "a"};
     std::string text = "    a a a  a  a    ";
     std::vector<std::string> real = fts::string_tokenization(text);
     for (int i = 0; i < 5; i++)
@@ -126,19 +106,9 @@ TEST(string_tokenization, white_spaces_everywhere)
 
 TEST(delete_stop_words, simple)
 {
-    std::vector<std::string> stop_words;
-    stop_words.push_back("and");
-    stop_words.push_back("dr");
-    stop_words.push_back("mr");
-    std::vector<std::string> expect;
-    expect.push_back("jekyll");
-    expect.push_back("hyde");
-    std::vector<std::string> real;
-    real.push_back("dr");
-    real.push_back("jekyll");
-    real.push_back("and");
-    real.push_back("mr");
-    real.push_back("hyde");
+    std::vector<std::string> stop_words{"dr", "and", "mr"};
+    std::vector<std::string> expect{"jekyll", "hyde"};
+    std::vector<std::string> real{"dr", "jekyll", "and", "mr", "hyde"};
     fts::delete_stop_words(real, stop_words);
     for (int i = 0; i < 2; i++)
     {
@@ -148,38 +118,18 @@ TEST(delete_stop_words, simple)
 
 TEST(delete_stop_words, no_relevant_words)
 {
-    std::vector<std::string> stop_words;
-    stop_words.push_back("and");
-    stop_words.push_back("dr");
-    stop_words.push_back("mr");
-    stop_words.push_back("a");
-    stop_words.push_back("with");
+    std::vector<std::string> stop_words{"dr", "and", "mr", "a", "with"};
     std::vector<std::string> expect;
-    std::vector<std::string> real;
-    real.push_back("dr");
-    real.push_back("a");
-    real.push_back("and");
-    real.push_back("mr");
-    real.push_back("with");
+    std::vector<std::string> real{"dr", "and", "mr", "a", "with"};
     fts::delete_stop_words(real, stop_words);
     EXPECT_TRUE(expect.size() == real.size());
 }
 
 TEST(delete_stop_words, numbers_in_stop_words)
 {
-    std::vector<std::string> stop_words;
-    stop_words.push_back("and");
-    stop_words.push_back("dr");
-    stop_words.push_back("mr");
-    stop_words.push_back("a12");
-    stop_words.push_back("with");
+    std::vector<std::string> stop_words{"dr", "and", "mr", "a12", "with"};
     std::vector<std::string> expect;
-    std::vector<std::string> real;
-    real.push_back("dr");
-    real.push_back("a12");
-    real.push_back("and");
-    real.push_back("mr");
-    real.push_back("with");
+    std::vector<std::string> real{"dr", "and", "mr", "a12", "with"};
     fts::delete_stop_words(real, stop_words);
     EXPECT_TRUE(expect.size() == real.size());
 }
@@ -187,9 +137,7 @@ TEST(delete_stop_words, numbers_in_stop_words)
 TEST(ngram_generation, simple)
 {
     int ngram_min_length = 3, ngram_max_length = 6;
-    std::vector<std::string> text_tokens;
-    text_tokens.push_back("jekyll");
-    text_tokens.push_back("hyde");
+    std::vector<std::string> text_tokens{"jekyll", "hyde"};
 
     std::vector<fts::ngram> expect;
     fts::ngram temp = {0, "jek"};
