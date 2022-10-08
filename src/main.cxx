@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     }
     catch (fts::parse_exception& msg)
     {
-        std::cout << msg.err() << '\n';
+        std::cout << msg.what() << '\n';
         return -1;
     }
 

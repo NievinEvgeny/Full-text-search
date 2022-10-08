@@ -28,13 +28,11 @@ struct conf_options parse_config(const std::string& config_filename)
     std::ifstream conf_file(config_filename);
     nlohmann::json parsed_config = nlohmann::json::parse(conf_file);
 
-    // clang-format off
-    fts::conf_options conf_options {
+    fts::conf_options conf_options{
         parsed_config.at("stop_words"),
         parsed_config.at("ngram_min_length"),
-        parsed_config.at("ngram_max_length")
+        parsed_config.at("ngram_max_length"),
     };
-    // clang-format on
 
     if (conf_options.ngram_min_length < 1)
     {

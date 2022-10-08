@@ -8,16 +8,9 @@ namespace fts {
 
 class parse_exception : public std::runtime_error
 {
-   private:
-    std::string error;
-
    public:
-    explicit parse_exception(const std::string& msg) : std::runtime_error{msg}, error{msg}
+    explicit parse_exception(const std::string& msg) : std::runtime_error{msg}
     {
-    }
-    std::string err()
-    {
-        return error;
     }
 };
 
