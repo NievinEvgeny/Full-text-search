@@ -1,8 +1,8 @@
 set(target_name fts)
 
 add_library(${target_name} STATIC
-    fts.cxx
-    ${PROJECT_SOURCE_DIR}/include/fts/fts.hpp)
+    parser.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/parser.hpp)
 
 include(CompileOptions)
 set_compile_options(${target_name})
