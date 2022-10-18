@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <unordered_set>
 #include <cctype>
 
 namespace fts {
@@ -23,25 +24,25 @@ static void remove_punctuation(std::string& text)
     std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return fts::punct_to_space(c); });
 }
 
-struct conf_options parse_config(const std::string& config_filename)
+struct ConfOptions parse_config(const std::string& conf_filename)
 {
-    std::ifstream conf_file(config_filename);
-    nlohmann::json parsed_config = nlohmann::json::parse(conf_file);
+    std::ifstream conf_file(conf_filename);
+    nlohmann::json parsed_conf = nlohmann::json::parse(conf_file);
 
-    fts::conf_options conf_options{
-        parsed_config.at("stop_words"),
-        parsed_config.at("ngram_min_length"),
-        parsed_config.at("ngram_max_length"),
+    fts::ConfOptions conf_options{
+        parsed_conf.at("stop_words"),
+        parsed_conf.at("ngram_min_length"),
+        parsed_conf.at("ngram_max_length"),
     };
 
     if (conf_options.ngram_min_length < 1)
     {
-        throw parse_exception{"Ngram min length is below 1"};
+        throw ParseException{"Ngram min length is below 1"};
     }
 
     if (conf_options.ngram_max_length < conf_options.ngram_min_length)
     {
-        throw parse_exception{"Max length of ngram less than min length"};
+        throw ParseException{"Max length of ngram less than min length"};
     }
 
     return conf_options;
@@ -83,9 +84,9 @@ void delete_stop_words(std::vector<std::string>& text_tokens, const std::unorder
     }
 }
 
-std::vector<ngram> ngram_generation(std::vector<std::string>& text_tokens, int ngram_min_length, int ngram_max_length)
+std::vector<Ngram> ngram_generation(std::vector<std::string>& text_tokens, int ngram_min_length, int ngram_max_length)
 {
-    std::vector<ngram> ngrams;
+    std::vector<Ngram> ngrams;
     int index = 0;
 
     for (auto& text_token : text_tokens)
@@ -97,7 +98,7 @@ std::vector<ngram> ngram_generation(std::vector<std::string>& text_tokens, int n
 
         for (int j = ngram_min_length; j <= std::min(ngram_max_length, static_cast<int>(text_token.size())); j++)
         {
-            ngram temp_ngram{index, text_token.substr(0, j)};
+            Ngram temp_ngram{index, text_token.substr(0, j)};
             ngrams.push_back(temp_ngram);
         }
         index++;
@@ -105,11 +106,10 @@ std::vector<ngram> ngram_generation(std::vector<std::string>& text_tokens, int n
     return ngrams;
 }
 
-void run_parser(const std::string& config_filename, const std::string& text)
+std::vector<Ngram> parse_query(fts::ConfOptions& conf_options, const std::string& text)
 {
     std::vector<std::string> text_tokens;
-    std::vector<ngram> ngrams;
-    fts::conf_options conf_options = parse_config(config_filename);
+    std::vector<Ngram> ngrams;
     std::string text_copy = text;
 
     remove_punctuation(text_copy);
@@ -118,29 +118,24 @@ void run_parser(const std::string& config_filename, const std::string& text)
 
     if (text_tokens.empty())
     {
-        throw parse_exception{"No relevant words in search string"};
+        throw ParseException{"No relevant words in search string"};
     }
 
     delete_stop_words(text_tokens, conf_options.stop_words);
 
     if (text_tokens.empty())
     {
-        throw parse_exception{"No relevant words in search string"};
+        throw ParseException{"No relevant words in search string"};
     }
 
     ngrams = ngram_generation(text_tokens, conf_options.ngram_min_length, conf_options.ngram_max_length);
 
     if (ngrams.empty())
     {
-        throw parse_exception{"No words that can be used to generate ngrams"};
+        throw ParseException{"No words that can be used to generate ngrams"};
     }
 
-    for (auto& ngram : ngrams)
-    {
-        std::cout << ngram.word << ' ';
-        std::cout << ngram.index << ' ';
-    }
-    std::cout << '\n';
+    return ngrams;
 }
 
 }  // namespace fts

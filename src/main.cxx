@@ -20,14 +20,19 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    const auto config_filename = parse_cmd_line["config"].as<std::string>();
+    const auto conf_filename = parse_cmd_line["config"].as<std::string>();
     const auto text = parse_cmd_line["text"].as<std::string>();
 
     try
     {
-        fts::run_parser(config_filename, text);
+        fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+        std::vector<fts::Ngram> ngrams = fts::parse_query(conf_options, text);
+        for (auto& ngram : ngrams)
+        {
+            std::cout << ngram.word << '\n';
+        }
     }
-    catch (fts::parse_exception& msg)
+    catch (fts::ParseException& msg)
     {
         std::cout << msg.what() << '\n';
         return -1;

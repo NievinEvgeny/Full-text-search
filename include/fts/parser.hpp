@@ -6,35 +6,35 @@
 
 namespace fts {
 
-class parse_exception : public std::runtime_error
+class ParseException : public std::runtime_error
 {
    public:
-    explicit parse_exception(const std::string& msg) : std::runtime_error{msg}
+    explicit ParseException(const std::string& msg) : std::runtime_error{msg}
     {
     }
 };
 
-struct ngram
+struct Ngram
 {
     int index;
     std::string word;
 };
 
-struct conf_options
+struct ConfOptions
 {
     const std::unordered_set<std::string> stop_words;
     int ngram_min_length = 0;
     int ngram_max_length = 0;
 };
 
-struct conf_options parse_config(const std::string& config_filename);
+struct ConfOptions parse_config(const std::string& conf_filename);
 
 std::vector<std::string> string_tokenization(std::string& text);
 
 void delete_stop_words(std::vector<std::string>& text_tokens, const std::unordered_set<std::string>& stop_words);
 
-std::vector<ngram> ngram_generation(std::vector<std::string>& text_tokens, int ngram_min_length, int ngram_max_length);
+std::vector<Ngram> ngram_generation(std::vector<std::string>& text_tokens, int ngram_min_length, int ngram_max_length);
 
-void run_parser(const std::string& config_filename, const std::string& text);
+std::vector<Ngram> parse_query(fts::ConfOptions& conf_options, const std::string& text);
 
 }  // namespace fts
