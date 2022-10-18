@@ -73,8 +73,8 @@ TEST(ngram_generation, simple)
     int ngram_min_length = 3, ngram_max_length = 6;
     std::vector<std::string> text_tokens{"jekyll", "hyde"};
 
-    std::vector<fts::ngram> expect = {{0, "jek"}, {0, "jeky"}, {0, "jekyl"}, {0, "jekyll"}, {1, "hyd"}, {1, "hyde"}};
-    std::vector<fts::ngram> real;
+    std::vector<fts::Ngram> expect = {{0, "jek"}, {0, "jeky"}, {0, "jekyl"}, {0, "jekyll"}, {1, "hyd"}, {1, "hyde"}};
+    std::vector<fts::Ngram> real;
 
     real = fts::ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
     for (int i = 0; i < 6; i++)
@@ -91,8 +91,8 @@ TEST(ngram_generation, non_relevant_words)
     text_tokens.push_back("je");
     text_tokens.push_back("hy");
 
-    std::vector<fts::ngram> expect;
-    std::vector<fts::ngram> real;
+    std::vector<fts::Ngram> expect;
+    std::vector<fts::Ngram> real;
 
     real = fts::ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
 
@@ -106,8 +106,8 @@ TEST(ngram_generation, big_and_small_words)
     text_tokens.push_back("peepoclown");
     text_tokens.push_back("hy");
 
-    std::vector<fts::ngram> expect = {{0, "pee"}, {0, "peep"}, {0, "peepo"}, {0, "peepoc"}};
-    std::vector<fts::ngram> real;
+    std::vector<fts::Ngram> expect = {{0, "pee"}, {0, "peep"}, {0, "peepo"}, {0, "peepoc"}};
+    std::vector<fts::Ngram> real;
 
     real = fts::ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
     for (int i = 0; i < 4; i++)

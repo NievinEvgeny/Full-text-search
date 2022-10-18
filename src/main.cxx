@@ -1,4 +1,5 @@
 #include <fts/parser.hpp>
+#include <fts/indexer.hpp>
 #include <cxxopts.hpp>
 #include <iostream>
 
@@ -6,31 +7,26 @@ int main(int argc, char** argv)
 {
     cxxopts::Options options("TextSearcher");
 
-    // clang-format off
-    options.add_options()
-    ("config,config_file", "Config file name", cxxopts::value<std::string>())
-    ("text,text_to_search", "Text to search", cxxopts::value<std::string>());
-    // clang-format on
+    options.add_options()("config,config_file", "Config file name", cxxopts::value<std::string>());
 
     const auto parse_cmd_line = options.parse(argc, argv);
 
-    if ((parse_cmd_line.count("config") != 1) || (parse_cmd_line.count("text") != 1))
+    if (parse_cmd_line.count("config") != 1)
     {
         std::cout << options.help() << "\n";
         return -1;
     }
 
     const auto conf_filename = parse_cmd_line["config"].as<std::string>();
-    const auto text = parse_cmd_line["text"].as<std::string>();
 
     try
     {
         fts::ConfOptions conf_options = fts::parse_config(conf_filename);
-        std::vector<fts::Ngram> ngrams = fts::parse_query(conf_options, text);
-        for (auto& ngram : ngrams)
-        {
-            std::cout << ngram.word << '\n';
-        }
+
+        fts::IndexBuilder indexes;
+        indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", conf_options);  // delete
+        indexes.add_document(238695, "The Matrix Revolution", conf_options);  // delete
+        indexes.add_document(390473, "The Matrix", conf_options);  // delete
     }
     catch (fts::ParseException& msg)
     {
