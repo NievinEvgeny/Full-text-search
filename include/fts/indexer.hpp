@@ -5,19 +5,25 @@
 
 namespace fts {
 
+using Pos = int;
+using DocId = int;
+using TermPositions = std::vector<Pos>;
+using IdToPositions = std::unordered_map<DocId, TermPositions>;
+using Term = std::string;
+using TermToDocsToTermPositions = std::unordered_map<Term, IdToPositions>;
+using TermHash = std::string;
+using TermHashToTermToDocsToTermPositions = std::unordered_map<TermHash, TermToDocsToTermPositions>;
+
+using Text = std::string;
+using DocIdToText = std::unordered_map<DocId, Text>;
+
 class IndexBuilder
 {
     struct Index
     {
-        std::unordered_map<int, std::string> docs;
+        DocIdToText docs;
 
-        // clang-format off
-        std::unordered_map
-        <std::string, std::unordered_map
-        <std::string, std::unordered_map
-        <int, std::vector<int>
-        >>> entries;
-        // clang-format on
+        TermHashToTermToDocsToTermPositions entries;
 
     } index;
 
