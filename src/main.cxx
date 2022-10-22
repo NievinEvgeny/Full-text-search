@@ -27,8 +27,16 @@ int main(int argc, char** argv)
         indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", conf_options);  // delete
         indexes.add_document(238695, "The Matrix Revolution", conf_options);  // delete
         indexes.add_document(390473, "The Matrix", conf_options);  // delete
+
+        fts::TextIndexWriter index_writer("index");
+        index_writer.write(indexes);
     }
     catch (fts::ParseException& msg)
+    {
+        std::cout << msg.what() << '\n';
+        return -1;
+    }
+    catch (fts::WriteIndexException& msg)
     {
         std::cout << msg.what() << '\n';
         return -1;
