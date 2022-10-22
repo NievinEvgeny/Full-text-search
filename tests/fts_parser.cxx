@@ -1,7 +1,10 @@
 #include <fts/parser.hpp>
+#include <fts/indexer.hpp>
+#include <PicoSHA2/picosha2.h>
 #include <gtest/gtest.h>
 #include <string>
 #include <unordered_set>
+#include <fstream>
 
 TEST(string_tokenization, simple)
 {
@@ -115,4 +118,47 @@ TEST(ngram_generation, big_and_small_words)
         EXPECT_TRUE(expect[i].index == real[i].index);
         EXPECT_TRUE(expect[i].word == real[i].word);
     }
+}
+
+TEST(write, check_text_in_index_docs)
+{
+    char text_from_doc[256];
+    int doc_id = 103975;
+    std::string path = "../../../index";
+    std::string query = "The Matrix Reloaded Revolution";
+    const std::string conf_filename = "../../../RunOptions.json";
+
+    fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+    fts::IndexBuilder indexes;
+    fts::TextIndexWriter index_writer(path);
+
+    indexes.add_document(doc_id, query, conf_options);
+    index_writer.write(indexes);
+
+    std::ifstream doc_to_check(path + "/docs/" += std::to_string(doc_id));
+    doc_to_check.getline(text_from_doc, 256);
+    EXPECT_TRUE(text_from_doc == query);
+}
+
+TEST(write, check_entries_in_index)
+{
+    char text_from_file[256];
+    int doc_id = 103975;
+    std::string exp_entrie = "revolu 1 103975 1 2 ";
+
+    std::string term_hash = "9e2f4d";
+    std::string path = "../../../index";
+    std::string query = "The Matrix Reloaded Revolution";
+    const std::string conf_filename = "../../../RunOptions.json";
+
+    fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+    fts::IndexBuilder indexes;
+    fts::TextIndexWriter index_writer(path);
+
+    indexes.add_document(doc_id, query, conf_options);
+    index_writer.write(indexes);
+
+    std::ifstream current_doc(path + "/entries/" += term_hash);
+    current_doc.getline(text_from_file, 256);
+    EXPECT_TRUE(text_from_file == exp_entrie);
 }
