@@ -27,7 +27,15 @@ static void remove_punctuation(std::string& text)
 fts::ConfOptions parse_config(const std::string& conf_filename)
 {
     std::ifstream conf_file(conf_filename);
+
+    if (!conf_file.is_open())
+    {
+        throw std::runtime_error{"Can't open file in parse_config function"};
+    }
+
     nlohmann::json parsed_conf = nlohmann::json::parse(conf_file);
+
+    conf_file.close();
 
     fts::ConfOptions conf_options{
         parsed_conf.at("stop_words"),
@@ -96,7 +104,9 @@ std::vector<Ngram> ngram_generation(std::vector<std::string>& text_tokens, int n
             continue;
         }
 
-        for (int j = ngram_min_length; j <= std::min(ngram_max_length, static_cast<int>(text_token.size())); j++)
+        int temp_max_length = std::min(ngram_max_length, static_cast<int>(text_token.size()));
+
+        for (int j = ngram_min_length; j <= temp_max_length; j++)
         {
             Ngram temp_ngram{index, text_token.substr(0, j)};
             ngrams.push_back(temp_ngram);

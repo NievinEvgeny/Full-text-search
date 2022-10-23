@@ -3,6 +3,7 @@ set(target_name tests)
 add_executable(
     ${target_name}
     fts_parser.cxx
+    fts_indexer.cxx
 )
 target_link_libraries(
     ${target_name}

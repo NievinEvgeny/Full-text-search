@@ -12,13 +12,12 @@ int main(int argc, char** argv)
 
     const auto parse_cmd_line = options.parse(argc, argv);
 
-    if (parse_cmd_line.count("config") != 1)
-    {
-        std::cout << options.help() << "\n";
-        return -1;
-    }
+    std::string conf_filename = "RunOptions.json";
 
-    const auto conf_filename = parse_cmd_line["config"].as<std::string>();
+    if (parse_cmd_line.count("config") == 1)
+    {
+        conf_filename = parse_cmd_line["config"].as<std::string>();
+    }
 
     try
     {
