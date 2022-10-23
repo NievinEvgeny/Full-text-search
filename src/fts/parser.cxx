@@ -74,11 +74,11 @@ std::vector<std::string> string_tokenization(std::string& text)
 
 void delete_stop_words(std::vector<std::string>& text_tokens, const std::unordered_set<std::string>& stop_words)
 {
-    for (int i = 0; i < static_cast<int>(text_tokens.size()); i++)
+    for (std::size_t i = 0; i < text_tokens.size(); i++)
     {
         if (stop_words.find(text_tokens[i]) != stop_words.end())
         {
-            text_tokens.erase(text_tokens.begin() + i);
+            text_tokens.erase(text_tokens.begin() + static_cast<int>(i));
             i--;
         }
     }
