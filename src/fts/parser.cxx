@@ -104,7 +104,9 @@ std::vector<Ngram> ngram_generation(std::vector<std::string>& text_tokens, int n
             continue;
         }
 
-        for (int j = ngram_min_length; j <= std::min(ngram_max_length, static_cast<int>(text_token.size())); j++)
+        int temp_max_length = std::min(ngram_max_length, static_cast<int>(text_token.size()));
+
+        for (int j = ngram_min_length; j <= temp_max_length; j++)
         {
             Ngram temp_ngram{index, text_token.substr(0, j)};
             ngrams.push_back(temp_ngram);
