@@ -25,22 +25,22 @@ void IndexBuilder::add_document(int document_id, const std::string& text, const 
 
 void TextIndexWriter::write(const fts::Index& index)
 {
-    for (auto& doc : index.docs)
+    for (const auto& [doc_id, text] : index.docs)
     {
-        std::ofstream current_doc(index_dir_path + "/docs/" += std::to_string(doc.first));
+        std::ofstream current_doc(index_dir_path + "/docs/" += std::to_string(doc_id));
 
         if (!current_doc.is_open())
         {
             throw std::runtime_error{"Can't open file in TextIndexWriter::write function"};
         }
 
-        current_doc << doc.second;
+        current_doc << text;
 
         current_doc.close();
     }
-    for (auto& [term_hash, terms] : index.entries)
+    for (const auto& [term_hash, terms] : index.entries)
     {
-        for (auto& [term, docs] : terms)
+        for (const auto& [term, docs] : terms)
         {
             std::ofstream current_entrie(index_dir_path + "/entries/" += term_hash);
 
@@ -51,11 +51,11 @@ void TextIndexWriter::write(const fts::Index& index)
 
             current_entrie << term << ' ' << docs.size() << ' ';
 
-            for (auto& [doc_id, term_positions] : docs)
+            for (const auto& [doc_id, term_positions] : docs)
             {
                 current_entrie << doc_id << ' ' << term_positions.size() << ' ';
 
-                for (auto& term_position : term_positions)
+                for (const auto& term_position : term_positions)
                 {
                     current_entrie << term_position << ' ';
                 }
