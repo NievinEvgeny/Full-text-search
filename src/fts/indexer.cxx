@@ -31,7 +31,7 @@ void TextIndexWriter::write(IndexBuilder& indexes)
 
         if (!current_doc.is_open())
         {
-            throw WriteIndexException{"Can't open file in TextIndexWriter::write function"};
+            throw std::runtime_error{"Can't open file in TextIndexWriter::write function"};
         }
 
         current_doc << doc.second;
@@ -46,7 +46,7 @@ void TextIndexWriter::write(IndexBuilder& indexes)
 
             if (!current_entrie.is_open())
             {
-                throw WriteIndexException{"Can't open file in TextIndexWriter::write function"};
+                throw std::runtime_error{"Can't open file in TextIndexWriter::write function"};
             }
 
             current_entrie << term << ' ' << docs.size() << ' ';

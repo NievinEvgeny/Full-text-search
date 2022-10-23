@@ -1,18 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <stdexcept>
 #include <unordered_set>
 
 namespace fts {
-
-class ParseException : public std::runtime_error
-{
-   public:
-    explicit ParseException(const std::string& msg) : std::runtime_error{msg}
-    {
-    }
-};
 
 struct Ngram
 {

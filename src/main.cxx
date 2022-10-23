@@ -2,6 +2,7 @@
 #include <fts/indexer.hpp>
 #include <cxxopts.hpp>
 #include <iostream>
+#include <stdexcept>
 
 int main(int argc, char** argv)
 {
@@ -31,12 +32,7 @@ int main(int argc, char** argv)
         fts::TextIndexWriter index_writer("index");
         index_writer.write(indexes);
     }
-    catch (const fts::ParseException& msg)
-    {
-        std::cout << msg.what() << '\n';
-        return -1;
-    }
-    catch (const fts::WriteIndexException& msg)
+    catch (const std::runtime_error& msg)
     {
         std::cout << msg.what() << '\n';
         return -1;

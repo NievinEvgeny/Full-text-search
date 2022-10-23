@@ -37,12 +37,12 @@ fts::ConfOptions parse_config(const std::string& conf_filename)
 
     if (conf_options.ngram_min_length < 1)
     {
-        throw ParseException{"Ngram min length is below 1"};
+        throw std::runtime_error{"Ngram min length is below 1"};
     }
 
     if (conf_options.ngram_max_length < conf_options.ngram_min_length)
     {
-        throw ParseException{"Max length of ngram less than min length"};
+        throw std::runtime_error{"Max length of ngram less than min length"};
     }
 
     return conf_options;
@@ -118,21 +118,21 @@ std::vector<Ngram> parse_query(const fts::ConfOptions& conf_options, const std::
 
     if (text_tokens.empty())
     {
-        throw ParseException{"No relevant words in search string"};
+        throw std::runtime_error{"No relevant words"};
     }
 
     delete_stop_words(text_tokens, conf_options.stop_words);
 
     if (text_tokens.empty())
     {
-        throw ParseException{"No relevant words in search string"};
+        throw std::runtime_error{"No relevant words"};
     }
 
     ngrams = ngram_generation(text_tokens, conf_options.ngram_min_length, conf_options.ngram_max_length);
 
     if (ngrams.empty())
     {
-        throw ParseException{"No words that can be used to generate ngrams"};
+        throw std::runtime_error{"No words that can be used to generate ngrams"};
     }
 
     return ngrams;
