@@ -30,7 +30,7 @@ int main(int argc, char** argv)
         indexes.add_document(390473, "The Matrix", conf_options);  // delete
 
         fts::TextIndexWriter index_writer("index");
-        index_writer.write(indexes);
+        index_writer.write(indexes.get_index());
     }
     catch (const std::runtime_error& msg)
     {

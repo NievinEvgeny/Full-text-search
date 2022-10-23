@@ -17,20 +17,24 @@ using TermHashToTermToDocsToTermPositions = std::unordered_map<TermHash, TermToD
 using Text = std::string;
 using DocIdToText = std::unordered_map<DocId, Text>;
 
+struct Index
+{
+    DocIdToText docs;
+
+    TermHashToTermToDocsToTermPositions entries;
+};
+
 class IndexBuilder
 {
-    struct Index
-    {
-        DocIdToText docs;
-
-        TermHashToTermToDocsToTermPositions entries;
-
-    } index;
+    fts::Index index;
 
    public:
-    void add_document(int document_id, const std::string& text, const fts::ConfOptions& conf_options);
+    const fts::Index& get_index()
+    {
+        return index;
+    }
 
-    friend class TextIndexWriter;
+    void add_document(int document_id, const std::string& text, const fts::ConfOptions& conf_options);
 };
 
 class TextIndexWriter
@@ -42,7 +46,7 @@ class TextIndexWriter
     {
     }
 
-    void write(IndexBuilder& indexes);
+    void write(const fts::Index& index);
 };
 
 }  // namespace fts

@@ -23,9 +23,9 @@ void IndexBuilder::add_document(int document_id, const std::string& text, const 
     }
 }
 
-void TextIndexWriter::write(IndexBuilder& indexes)
+void TextIndexWriter::write(const fts::Index& index)
 {
-    for (auto& doc : indexes.index.docs)
+    for (auto& doc : index.docs)
     {
         std::ofstream current_doc(index_dir_path + "/docs/" += std::to_string(doc.first));
 
@@ -38,7 +38,7 @@ void TextIndexWriter::write(IndexBuilder& indexes)
 
         current_doc.close();
     }
-    for (auto& [term_hash, terms] : indexes.index.entries)
+    for (auto& [term_hash, terms] : index.entries)
     {
         for (auto& [term, docs] : terms)
         {
