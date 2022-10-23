@@ -38,24 +38,24 @@ void TextIndexWriter::write(IndexBuilder& indexes)
 
         current_doc.close();
     }
-    for (auto& term_hashes : indexes.index.entries)
+    for (auto& [term_hash, terms] : indexes.index.entries)
     {
-        for (auto& terms : term_hashes.second)
+        for (auto& [term, docs] : terms)
         {
-            std::ofstream current_entrie(index_dir_path + "/entries/" += term_hashes.first);
+            std::ofstream current_entrie(index_dir_path + "/entries/" += term_hash);
 
             if (!current_entrie.is_open())
             {
                 throw WriteIndexException{"Can't open file in TextIndexWriter::write function"};
             }
 
-            current_entrie << terms.first << ' ' << terms.second.size() << ' ';
+            current_entrie << term << ' ' << docs.size() << ' ';
 
-            for (auto& docs : terms.second)
+            for (auto& [doc_id, term_positions] : docs)
             {
-                current_entrie << docs.first << ' ' << docs.second.size() << ' ';
+                current_entrie << doc_id << ' ' << term_positions.size() << ' ';
 
-                for (auto& term_position : docs.second)
+                for (auto& term_position : term_positions)
                 {
                     current_entrie << term_position << ' ';
                 }
