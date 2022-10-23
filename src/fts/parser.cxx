@@ -24,7 +24,7 @@ static void remove_punctuation(std::string& text)
     std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return fts::punct_to_space(c); });
 }
 
-struct ConfOptions parse_config(const std::string& conf_filename)
+fts::ConfOptions parse_config(const std::string& conf_filename)
 {
     std::ifstream conf_file(conf_filename);
     nlohmann::json parsed_conf = nlohmann::json::parse(conf_file);
@@ -106,7 +106,7 @@ std::vector<Ngram> ngram_generation(std::vector<std::string>& text_tokens, int n
     return ngrams;
 }
 
-std::vector<Ngram> parse_query(fts::ConfOptions& conf_options, const std::string& text)
+std::vector<Ngram> parse_query(const fts::ConfOptions& conf_options, const std::string& text)
 {
     std::vector<std::string> text_tokens;
     std::vector<Ngram> ngrams;

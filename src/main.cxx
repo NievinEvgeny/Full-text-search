@@ -31,12 +31,12 @@ int main(int argc, char** argv)
         fts::TextIndexWriter index_writer("index");
         index_writer.write(indexes);
     }
-    catch (fts::ParseException& msg)
+    catch (const fts::ParseException& msg)
     {
         std::cout << msg.what() << '\n';
         return -1;
     }
-    catch (fts::WriteIndexException& msg)
+    catch (const fts::WriteIndexException& msg)
     {
         std::cout << msg.what() << '\n';
         return -1;
