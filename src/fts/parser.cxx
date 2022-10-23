@@ -27,7 +27,15 @@ static void remove_punctuation(std::string& text)
 fts::ConfOptions parse_config(const std::string& conf_filename)
 {
     std::ifstream conf_file(conf_filename);
+
+    if (!conf_file.is_open())
+    {
+        throw std::runtime_error{"Can't open file in parse_config function"};
+    }
+
     nlohmann::json parsed_conf = nlohmann::json::parse(conf_file);
+
+    conf_file.close();
 
     fts::ConfOptions conf_options{
         parsed_conf.at("stop_words"),
