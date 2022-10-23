@@ -24,7 +24,7 @@ static void remove_punctuation(std::string& text)
     std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return fts::punct_to_space(c); });
 }
 
-struct ConfOptions parse_config(const std::string& conf_filename)
+fts::ConfOptions parse_config(const std::string& conf_filename)
 {
     std::ifstream conf_file(conf_filename);
     nlohmann::json parsed_conf = nlohmann::json::parse(conf_file);
@@ -37,12 +37,12 @@ struct ConfOptions parse_config(const std::string& conf_filename)
 
     if (conf_options.ngram_min_length < 1)
     {
-        throw ParseException{"Ngram min length is below 1"};
+        throw std::runtime_error{"Ngram min length is below 1"};
     }
 
     if (conf_options.ngram_max_length < conf_options.ngram_min_length)
     {
-        throw ParseException{"Max length of ngram less than min length"};
+        throw std::runtime_error{"Max length of ngram less than min length"};
     }
 
     return conf_options;
@@ -74,11 +74,11 @@ std::vector<std::string> string_tokenization(std::string& text)
 
 void delete_stop_words(std::vector<std::string>& text_tokens, const std::unordered_set<std::string>& stop_words)
 {
-    for (int i = 0; i < static_cast<int>(text_tokens.size()); i++)
+    for (std::size_t i = 0; i < text_tokens.size(); i++)
     {
         if (stop_words.find(text_tokens[i]) != stop_words.end())
         {
-            text_tokens.erase(text_tokens.begin() + i);
+            text_tokens.erase(text_tokens.begin() + static_cast<int>(i));
             i--;
         }
     }
@@ -106,7 +106,7 @@ std::vector<Ngram> ngram_generation(std::vector<std::string>& text_tokens, int n
     return ngrams;
 }
 
-std::vector<Ngram> parse_query(fts::ConfOptions& conf_options, const std::string& text)
+std::vector<Ngram> parse_query(const fts::ConfOptions& conf_options, const std::string& text)
 {
     std::vector<std::string> text_tokens;
     std::vector<Ngram> ngrams;
@@ -118,21 +118,21 @@ std::vector<Ngram> parse_query(fts::ConfOptions& conf_options, const std::string
 
     if (text_tokens.empty())
     {
-        throw ParseException{"No relevant words in search string"};
+        throw std::runtime_error{"No relevant words"};
     }
 
     delete_stop_words(text_tokens, conf_options.stop_words);
 
     if (text_tokens.empty())
     {
-        throw ParseException{"No relevant words in search string"};
+        throw std::runtime_error{"No relevant words"};
     }
 
     ngrams = ngram_generation(text_tokens, conf_options.ngram_min_length, conf_options.ngram_max_length);
 
     if (ngrams.empty())
     {
-        throw ParseException{"No words that can be used to generate ngrams"};
+        throw std::runtime_error{"No words that can be used to generate ngrams"};
     }
 
     return ngrams;

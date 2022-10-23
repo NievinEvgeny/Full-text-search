@@ -2,6 +2,7 @@
 #include <fts/indexer.hpp>
 #include <cxxopts.hpp>
 #include <iostream>
+#include <stdexcept>
 
 int main(int argc, char** argv)
 {
@@ -29,14 +30,9 @@ int main(int argc, char** argv)
         indexes.add_document(390473, "The Matrix", conf_options);  // delete
 
         fts::TextIndexWriter index_writer("index");
-        index_writer.write(indexes);
+        index_writer.write(indexes.get_index());
     }
-    catch (fts::ParseException& msg)
-    {
-        std::cout << msg.what() << '\n';
-        return -1;
-    }
-    catch (fts::WriteIndexException& msg)
+    catch (const std::runtime_error& msg)
     {
         std::cout << msg.what() << '\n';
         return -1;
