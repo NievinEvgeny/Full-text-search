@@ -31,7 +31,7 @@ int main(int argc, char** argv)
         fts::TextIndexWriter index_writer("index");
         index_writer.write(indexes.get_index());
     }
-    catch (const std::runtime_error& msg)
+    catch (const std::exception& msg)
     {
         std::cout << msg.what() << '\n';
         return -1;
