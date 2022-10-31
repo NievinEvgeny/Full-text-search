@@ -3,6 +3,29 @@
 #include <cxxopts.hpp>
 #include <iostream>
 #include <stdexcept>
+#include <filesystem>
+#include <vector>
+
+namespace {
+
+void create_index_directories(const std::string& index_path)
+{
+    const std::filesystem::path index(index_path);
+    const std::filesystem::path index_docs(index_path + "/docs");
+    const std::filesystem::path index_entries(index_path + "/entries");
+
+    const std::vector<std::filesystem::path> directories = {index, index_docs, index_entries};
+
+    for (const auto& dir : directories)
+    {
+        if (!std::filesystem::exists(dir))
+        {
+            std::filesystem::create_directory(dir);
+        }
+    }
+}
+
+}  // namespace
 
 int main(int argc, char** argv)
 {
@@ -10,9 +33,9 @@ int main(int argc, char** argv)
 
     // clang-format off
     options.add_options()
-        ("i,indexer", "Indexer call")
-        ("s,searcher", "Searcher call")
-        ("index,index_path", "Path for index", cxxopts::value<std::string>()->default_value("index"))
+        ("indexer", "Indexer call")
+        ("searcher", "Searcher call")
+        ("i,index_path", "Path for index", cxxopts::value<std::string>()->default_value("index"))
         ("q,query", "Query to search", cxxopts::value<std::string>())
         ("c,config_file", "Config file name", cxxopts::value<std::string>()->default_value("RunOptions.json"))
         ("h,help", "Print usage");
@@ -28,7 +51,9 @@ int main(int argc, char** argv)
             return 0;
         }
 
-        std::string index_path = parse_cmd_line["index_path"].as<std::string>();
+        const std::string index_path = parse_cmd_line["index_path"].as<std::string>();
+
+        create_index_directories(index_path);
 
         if (parse_cmd_line.count("indexer"))
         {
@@ -43,7 +68,6 @@ int main(int argc, char** argv)
 
             fts::TextIndexWriter index_writer(index_path);
             index_writer.write(indexes.get_index());
-            // TODO (create folder if index_path isn't default)
             // TODO (add config copy to serialization)
         }
 
