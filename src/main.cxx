@@ -8,7 +8,7 @@
 
 namespace {
 
-void create_index_directories(const std::string& index_path)
+void check_index_directories(const std::string& index_path, size_t indexer, size_t searcher)
 {
     const std::filesystem::path index(index_path);
     const std::filesystem::path index_docs(index_path + "/docs");
@@ -20,7 +20,14 @@ void create_index_directories(const std::string& index_path)
     {
         if (!std::filesystem::exists(dir))
         {
-            std::filesystem::create_directory(dir);
+            if (indexer)
+            {
+                std::filesystem::create_directory(dir);
+            }
+            if (searcher && (indexer == 0))
+            {
+                throw std::runtime_error{"Selected directory doesn't exist"};
+            }
         }
     }
 }
@@ -52,15 +59,13 @@ int main(int argc, char** argv)
         }
 
         const std::string index_path = parse_cmd_line["index_path"].as<std::string>();
+        const std::string conf_filename = parse_cmd_line["config_file"].as<std::string>();
+        const fts::ConfOptions conf_options = fts::parse_config(conf_filename);
 
-        create_index_directories(index_path);
+        check_index_directories(index_path, parse_cmd_line.count("indexer"), parse_cmd_line.count("searcher"));
 
         if (parse_cmd_line.count("indexer"))
         {
-            std::string conf_filename = parse_cmd_line["config_file"].as<std::string>();
-
-            fts::ConfOptions conf_options = fts::parse_config(conf_filename);
-
             fts::IndexBuilder indexes;
             indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", conf_options);  // delete
             indexes.add_document(238695, "The Matrix Revolution", conf_options);  // delete
