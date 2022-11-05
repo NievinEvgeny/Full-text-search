@@ -1,5 +1,6 @@
 #include <fts/parser.hpp>
 #include <fts/indexer.hpp>
+#include <fts/searcher.hpp>
 #include <nlohmann/json.hpp>
 #include <cxxopts.hpp>
 #include <iostream>
@@ -81,7 +82,10 @@ int main(int argc, char** argv)
 
         if (parse_cmd_line.count("searcher"))
         {
-            // TODO (implementation of searcher)
+            const std::string query = parse_cmd_line["query"].as<std::string>();
+
+            fts::SearcherBuf searcher_buf;
+            searcher_buf.deserialize_index(query, index_path);
         }
     }
 
