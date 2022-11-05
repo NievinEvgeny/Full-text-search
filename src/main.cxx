@@ -86,6 +86,7 @@ int main(int argc, char** argv)
 
             fts::SearcherBuf searcher_buf;
             searcher_buf.deserialize_index(query, index_path);
+            searcher_buf.count_docs(index_path);
         }
     }
 

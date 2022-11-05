@@ -20,10 +20,12 @@ class SearcherBuf
 
     std::unordered_map<int, double> doc_score;
 
-    int num_of_docs;
+    int num_of_docs = 0;
 
    public:
     void deserialize_index(const std::string& query, const std::string& index_path);
+
+    void count_docs(const std::string& index_path);
 };
 
 }  // namespace fts

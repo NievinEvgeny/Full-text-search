@@ -64,4 +64,17 @@ void SearcherBuf::deserialize_index(const std::string& query, const std::string&
     }
 }
 
+void SearcherBuf::count_docs(const std::string& index_path)
+{
+    auto dir_iter = std::filesystem::directory_iterator(index_path);
+
+    for (const auto& doc : dir_iter)
+    {
+        if (doc.is_regular_file())
+        {
+            num_of_docs++;
+        }
+    }
+}
+
 }  // namespace fts
