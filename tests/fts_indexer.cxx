@@ -6,7 +6,8 @@
 TEST(add_document, num_of_added_docs)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
+    const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
 
     fts::IndexBuilder indexes;
 
@@ -20,7 +21,8 @@ TEST(add_document, num_of_added_docs)
 TEST(add_document, text_in_index_docs)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
+    const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
 
     fts::IndexBuilder indexes;
 
@@ -34,7 +36,8 @@ TEST(add_document, text_in_index_docs)
 TEST(add_document, non_exist_doc_id)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
+    const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
 
     fts::IndexBuilder indexes;
 
@@ -48,7 +51,8 @@ TEST(add_document, non_exist_doc_id)
 TEST(add_document, check_rewrited_doc)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
+    const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
 
     fts::IndexBuilder indexes;
 
@@ -66,7 +70,8 @@ TEST(add_document, check_rewrited_doc)
 TEST(add_document, check_num_of_entries)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
+    const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
 
     fts::IndexBuilder indexes;
 
@@ -80,7 +85,8 @@ TEST(add_document, check_num_of_entries)
 TEST(add_document, check_num_of_docs_with_term)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
+    const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
 
     fts::IndexBuilder indexes;
 
@@ -99,7 +105,8 @@ TEST(add_document, check_num_of_docs_with_term)
 TEST(add_document, num_of_docs_with_term_is_zero)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
+    const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
 
     fts::IndexBuilder indexes;
 
@@ -118,7 +125,8 @@ TEST(add_document, num_of_docs_with_term_is_zero)
 TEST(add_document, check_term_positions_in_doc)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
+    const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
 
     fts::IndexBuilder indexes;
 
