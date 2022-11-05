@@ -24,7 +24,7 @@ static void remove_punctuation(std::string& text)
     std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return fts::punct_to_space(c); });
 }
 
-fts::ConfOptions parse_config(const std::string& conf_filename)
+nlohmann::json parse_config(const std::string& conf_filename)
 {
     std::ifstream conf_file(conf_filename);
 
@@ -37,6 +37,11 @@ fts::ConfOptions parse_config(const std::string& conf_filename)
 
     conf_file.close();
 
+    return parsed_conf;
+}
+
+fts::ConfOptions parse_json_struct(const nlohmann::json& parsed_conf)
+{
     fts::ConfOptions conf_options{
         parsed_conf.at("stop_words"),
         parsed_conf.at("ngram_min_length"),
@@ -54,6 +59,19 @@ fts::ConfOptions parse_config(const std::string& conf_filename)
     }
 
     return conf_options;
+}
+
+void copy_config(const nlohmann::json& parsed_conf, const std::string& index_path)
+{
+    std::ofstream conf_copy_file(index_path + "/Config.json");
+
+    if (!conf_copy_file.is_open())
+    {
+        throw std::runtime_error{"Can't open file in copy_config function"};
+    }
+
+    conf_copy_file << std::setw(4) << parsed_conf << '\n';
+    conf_copy_file.close();
 }
 
 std::vector<std::string> string_tokenization(std::string& text)

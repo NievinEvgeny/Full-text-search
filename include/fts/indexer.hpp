@@ -1,3 +1,4 @@
+#pragma once
 #include <fts/parser.hpp>
 #include <unordered_map>
 #include <string>
