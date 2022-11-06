@@ -4,6 +4,8 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
+#include <algorithm>
+#include <cmath>
 
 namespace fts {
 
@@ -54,7 +56,7 @@ void SearcherBuf::deserialize_index(const std::string& query, const std::string&
                 int term_freq = std::stoi(*iter);
                 iter += term_freq;
 
-                terms[ngram.word].doc_ids.push_back(doc_id);
+                terms[ngram.word].doc_ids.insert(doc_id);
                 terms[ngram.word].term_frequency[doc_id] = term_freq;
             }
 
@@ -74,6 +76,45 @@ void SearcherBuf::store_doc_ids(const std::string& index_path)
             all_doc_ids.push_back(std::stoi(doc.path().stem().string()));
         }
     }
+}
+
+void SearcherBuf::score_calc()
+{
+    for (const auto& doc_id : all_doc_ids)
+    {
+        fts::DocScore temp_doc_score = {doc_id, 0};
+
+        for (const auto& [term, attributes] : terms)
+        {
+            if (attributes.doc_ids.find(doc_id) != attributes.doc_ids.end())
+            {
+                temp_doc_score.score += attributes.term_frequency.at(doc_id)
+                    * log(static_cast<double>(all_doc_ids.size()) / static_cast<double>(attributes.doc_frequency));
+            }
+        }
+
+        doc_scores.push_back(temp_doc_score);
+    }
+}
+
+void SearcherBuf::score_sort()
+{
+    std::sort(doc_scores.begin(), doc_scores.end(), [](const fts::DocScore& a, const fts::DocScore& b) {
+        if (a.score == b.score)
+        {
+            return a.doc_id < b.doc_id;
+        }
+        return a.score > b.score;
+    });
+}
+
+const std::vector<DocScore>& SearcherBuf::get_scores(const std::string& query, const std::string& index_path)
+{
+    deserialize_index(query, index_path);
+    store_doc_ids(index_path);
+    score_calc();
+    score_sort();
+    return doc_scores;
 }
 
 }  // namespace fts

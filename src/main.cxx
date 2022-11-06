@@ -75,6 +75,7 @@ int main(int argc, char** argv)
             indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", conf_options);  // delete
             indexes.add_document(238695, "The Matrix Revolution", conf_options);  // delete
             indexes.add_document(390473, "The Matrix", conf_options);  // delete
+            indexes.add_document(450473, "Peepo the Clown", conf_options);  // delete
 
             fts::TextIndexWriter index_writer(index_path);
             index_writer.write(indexes.get_index());
@@ -85,8 +86,13 @@ int main(int argc, char** argv)
             const std::string query = parse_cmd_line["query"].as<std::string>();
 
             fts::SearcherBuf searcher_buf;
-            searcher_buf.deserialize_index(query, index_path);
-            searcher_buf.store_doc_ids(index_path);
+
+            std::vector<fts::DocScore> doc_scores = searcher_buf.get_scores(query, index_path);
+
+            for (const auto& doc_score : doc_scores)
+            {
+                std::cout << doc_score.doc_id << ' ' << doc_score.score << '\n';
+            }
         }
     }
 
