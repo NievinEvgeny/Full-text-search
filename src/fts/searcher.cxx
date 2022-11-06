@@ -2,6 +2,7 @@
 #include <fts/parser.hpp>
 #include <PicoSHA2/picosha2.h>
 #include <string>
+#include <filesystem>
 #include <fstream>
 
 namespace fts {
@@ -64,15 +65,13 @@ void SearcherBuf::deserialize_index(const std::string& query, const std::string&
     }
 }
 
-void SearcherBuf::count_docs(const std::string& index_path)
+void SearcherBuf::store_doc_ids(const std::string& index_path)
 {
-    auto dir_iter = std::filesystem::directory_iterator(index_path);
-
-    for (const auto& doc : dir_iter)
+    for (const auto& doc : std::filesystem::directory_iterator(index_path + "/docs/"))
     {
         if (doc.is_regular_file())
         {
-            num_of_docs++;
+            all_doc_ids.push_back(std::stoi(doc.path().stem().string()));
         }
     }
 }

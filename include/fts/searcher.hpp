@@ -5,6 +5,12 @@
 
 namespace fts {
 
+struct DocScore
+{
+    int doc_id;
+    double score;
+};
+
 struct TermAttributes
 {
     std::vector<int> doc_ids;
@@ -18,14 +24,14 @@ class SearcherBuf
 {
     std::unordered_map<std::string, fts::TermAttributes> terms;
 
-    std::unordered_map<int, double> doc_score;
+    std::vector<DocScore> doc_score;
 
-    int num_of_docs = 0;
+    std::vector<int> all_doc_ids;
 
    public:
     void deserialize_index(const std::string& query, const std::string& index_path);
 
-    void count_docs(const std::string& index_path);
+    void store_doc_ids(const std::string& index_path);
 };
 
 }  // namespace fts
