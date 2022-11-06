@@ -1,6 +1,6 @@
 {
-    "ngram_min_length": 3,
-    "ngram_max_length": 6,
+    "ngram_min_len": 3,
+    "ngram_max_len": 6,
     "stop_words": [
         "and",
         "dr",

@@ -16,6 +16,7 @@ target_link_libraries(
     PRIVATE
     fts
     cxxopts
+    nlohmann_json::nlohmann_json
 )
 
 add_subdirectory(fts)

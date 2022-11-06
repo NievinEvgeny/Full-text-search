@@ -40,10 +40,10 @@ void TextIndexWriter::write(const fts::Index& index)
     }
     for (const auto& [term_hash, terms] : index.entries)
     {
+        std::ofstream current_entrie(index_dir_path + "/entries/" += term_hash);
+
         for (const auto& [term, docs] : terms)
         {
-            std::ofstream current_entrie(index_dir_path + "/entries/" += term_hash);
-
             if (!current_entrie.is_open())
             {
                 throw std::runtime_error{"Can't open file in TextIndexWriter::write function"};
@@ -60,9 +60,9 @@ void TextIndexWriter::write(const fts::Index& index)
                     current_entrie << term_position << ' ';
                 }
             }
-
-            current_entrie.close();
+            current_entrie << '\n';
         }
+        current_entrie.close();
     }
 }
 

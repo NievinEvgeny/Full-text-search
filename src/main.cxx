@@ -1,39 +1,110 @@
 #include <fts/parser.hpp>
 #include <fts/indexer.hpp>
+#include <fts/searcher.hpp>
+#include <nlohmann/json.hpp>
 #include <cxxopts.hpp>
 #include <iostream>
 #include <stdexcept>
+#include <filesystem>
+#include <vector>
+
+namespace {
+
+void check_index_directories(const std::string& index_path, size_t indexer, size_t searcher)
+{
+    const std::filesystem::path index(index_path);
+    const std::filesystem::path index_docs(index_path + "/docs");
+    const std::filesystem::path index_entries(index_path + "/entries");
+
+    const std::vector<std::filesystem::path> directories = {index, index_docs, index_entries};
+
+    for (const auto& dir : directories)
+    {
+        if (!std::filesystem::exists(dir))
+        {
+            if (indexer)
+            {
+                std::filesystem::create_directory(dir);
+            }
+            if (searcher && (indexer == 0))
+            {
+                throw std::runtime_error{"Selected directory doesn't exist"};
+            }
+        }
+    }
+}
+
+}  // namespace
 
 int main(int argc, char** argv)
 {
     cxxopts::Options options("TextSearcher");
 
-    options.add_options()("config,config_file", "Config file name", cxxopts::value<std::string>());
-
-    const auto parse_cmd_line = options.parse(argc, argv);
-
-    std::string conf_filename = "RunOptions.json";
-
-    if (parse_cmd_line.count("config") == 1)
-    {
-        conf_filename = parse_cmd_line["config"].as<std::string>();
-    }
+    // clang-format off
+    options.add_options()
+        ("indexer", "Indexer call")
+        ("searcher", "Searcher call")
+        ("i,index_path", "Path for index", cxxopts::value<std::string>()->default_value("index"))
+        ("q,query", "Query to search", cxxopts::value<std::string>())
+        ("c,config_file", "Config file name (only for indexer)", cxxopts::value<std::string>()->default_value("RunOptions.json"))
+        ("h,help", "Print usage");
+    // clang-format on
 
     try
     {
-        fts::ConfOptions conf_options = fts::parse_config(conf_filename);
+        const auto parse_cmd_line = options.parse(argc, argv);
 
-        fts::IndexBuilder indexes;
-        indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", conf_options);  // delete
-        indexes.add_document(238695, "The Matrix Revolution", conf_options);  // delete
-        indexes.add_document(390473, "The Matrix", conf_options);  // delete
+        if (parse_cmd_line.count("help"))
+        {
+            std::cout << options.help() << '\n';
+            return 0;
+        }
 
-        fts::TextIndexWriter index_writer("index");
-        index_writer.write(indexes.get_index());
+        const std::string index_path = parse_cmd_line["index_path"].as<std::string>();
+
+        check_index_directories(index_path, parse_cmd_line.count("indexer"), parse_cmd_line.count("searcher"));
+
+        if (parse_cmd_line.count("indexer"))
+        {
+            const std::string conf_filename = parse_cmd_line["config_file"].as<std::string>();
+            const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
+            const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
+            fts::copy_config(parsed_conf, index_path);
+
+            fts::IndexBuilder indexes;
+            indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", conf_options);  // delete
+            indexes.add_document(238695, "The Matrix Revolution", conf_options);  // delete
+            indexes.add_document(390473, "The Matrix", conf_options);  // delete
+            indexes.add_document(450473, "Peepo the Clown", conf_options);  // delete
+
+            fts::TextIndexWriter index_writer(index_path);
+            index_writer.write(indexes.get_index());
+        }
+
+        if (parse_cmd_line.count("searcher"))
+        {
+            const std::string query = parse_cmd_line["query"].as<std::string>();
+
+            fts::SearcherBuf searcher_buf;
+
+            std::vector<fts::DocScore> doc_scores = searcher_buf.get_scores(query, index_path);
+
+            for (const auto& doc_score : doc_scores)
+            {
+                std::cout << doc_score.doc_id << ' ' << doc_score.score << '\n';
+            }
+        }
     }
-    catch (const std::runtime_error& msg)
+
+    catch (const cxxopts::exceptions::exception& msg)
     {
-        std::cout << msg.what() << '\n';
+        std::cerr << msg.what() << '\n';
+        return -1;
+    }
+
+    catch (const std::exception& msg)
+    {
+        std::cerr << msg.what() << '\n';
         return -1;
     }
 

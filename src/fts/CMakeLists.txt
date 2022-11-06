@@ -5,7 +5,9 @@ add_library(${target_name} STATIC
     ${PROJECT_SOURCE_DIR}/include/fts/parser.hpp
     indexer.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/indexer.hpp
-    )
+    searcher.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/searcher.hpp
+)
 
 include(CompileOptions)
 set_compile_options(${target_name})
