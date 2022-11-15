@@ -1,5 +1,6 @@
 #include <fts/parser.hpp>
 #include <nlohmann/json.hpp>
+#include <PicoSHA2/picosha2.h>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -22,6 +23,13 @@ static void char_to_lower_case(std::string& text)
 static void remove_punctuation(std::string& text)
 {
     std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return fts::punct_to_space(c); });
+}
+
+std::string get_word_hash(const std::string& word)
+{
+    const int hash_required_len = 6;
+    std::string word_hash = picosha2::hash256_hex_string(word);
+    return word_hash.erase(hash_required_len);
 }
 
 nlohmann::json parse_config(const std::string& conf_filename)

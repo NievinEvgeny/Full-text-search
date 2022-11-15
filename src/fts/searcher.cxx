@@ -1,6 +1,5 @@
 #include <fts/searcher.hpp>
 #include <fts/parser.hpp>
-#include <PicoSHA2/picosha2.h>
 #include <string>
 #include <filesystem>
 #include <fstream>
@@ -11,8 +10,6 @@ namespace fts {
 
 void SearcherBuf::deserialize_index(const std::string& query, const std::string& index_path)
 {
-    const int hash_required_len = 6;
-
     const nlohmann::json parsed_conf = fts::parse_config(index_path + "/Config.json");
     const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
 
@@ -20,11 +17,10 @@ void SearcherBuf::deserialize_index(const std::string& query, const std::string&
 
     for (const auto& ngram : ngrams)
     {
-        std::string text_hash = picosha2::hash256_hex_string(ngram.word);
-        text_hash.erase(hash_required_len);
+        std::string word_hash = fts::get_word_hash(ngram.word);
 
-        const std::filesystem::path entrie_doc_path(index_path + "/entries/" += text_hash);
-        std::ifstream entrie_doc(index_path + "/entries/" += text_hash);
+        const std::filesystem::path entrie_doc_path(index_path + "/entries/" += word_hash);
+        std::ifstream entrie_doc(index_path + "/entries/" += word_hash);
 
         if (!std::filesystem::exists(entrie_doc_path))
         {
@@ -100,11 +96,7 @@ void SearcherBuf::score_calc()
 void SearcherBuf::score_sort()
 {
     std::sort(doc_scores.begin(), doc_scores.end(), [](const fts::DocScore& a, const fts::DocScore& b) {
-        if (a.score == b.score)
-        {
-            return a.doc_id < b.doc_id;
-        }
-        return a.score > b.score;
+        return (a.score == b.score) ? (a.doc_id < b.doc_id) : (a.score > b.score);
     });
 }
 

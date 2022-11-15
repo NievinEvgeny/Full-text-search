@@ -19,6 +19,8 @@ struct ConfOptions
     int ngram_max_len = 0;
 };
 
+std::string get_word_hash(const std::string& word);
+
 nlohmann::json parse_config(const std::string& conf_filename);
 
 fts::ConfOptions parse_json_struct(const nlohmann::json& parsed_conf);
