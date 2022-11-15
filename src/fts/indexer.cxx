@@ -9,14 +9,14 @@ namespace fts {
 
 void IndexBuilder::add_document(int document_id, const std::string& text, const fts::ConfOptions& conf_options)
 {
-    index.docs[document_id] = text;
+    this->index.docs[document_id] = text;
 
     const std::vector<fts::Ngram> ngrams = fts::parse_query(conf_options, text);
 
     for (const auto& ngram : ngrams)
     {
         std::string word_hash = fts::get_word_hash(ngram.word);
-        index.entries[word_hash][ngram.word][document_id].push_back(ngram.index);
+        this->index.entries[word_hash][ngram.word][document_id].push_back(ngram.index);
     }
 }
 
@@ -24,7 +24,7 @@ void TextIndexWriter::write(const fts::Index& index)
 {
     for (const auto& [doc_id, text] : index.docs)
     {
-        std::ofstream current_doc(index_dir_path + "/docs/" += std::to_string(doc_id));
+        std::ofstream current_doc(this->index_dir_path + "/docs/" += std::to_string(doc_id));
 
         if (!current_doc.is_open())
         {
@@ -37,7 +37,7 @@ void TextIndexWriter::write(const fts::Index& index)
     }
     for (const auto& [term_hash, terms] : index.entries)
     {
-        std::ofstream current_entrie(index_dir_path + "/entries/" += term_hash);
+        std::ofstream current_entrie(this->index_dir_path + "/entries/" += term_hash);
 
         for (const auto& [term, docs] : terms)
         {

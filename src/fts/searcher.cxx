@@ -17,7 +17,7 @@ void SearcherBuf::deserialize_index(const std::string& query, const std::string&
 
     for (const auto& ngram : ngrams)
     {
-        std::string word_hash = fts::get_word_hash(ngram.word);
+        const std::string word_hash = fts::get_word_hash(ngram.word);
 
         const std::filesystem::path entrie_doc_path(index_path + "/entries/" += word_hash);
         std::ifstream entrie_doc(index_path + "/entries/" += word_hash);
@@ -42,7 +42,7 @@ void SearcherBuf::deserialize_index(const std::string& query, const std::string&
 
             const std::vector<std::string> line_tokens = string_tokenization(line_from_entrie);
 
-            terms[ngram.word].doc_frequency = std::stoi(*(line_tokens.begin() + 1));
+            this->terms[ngram.word].doc_frequency = std::stoi(*(line_tokens.begin() + 1));
 
             for (auto iter = line_tokens.begin() + 2; iter != line_tokens.end(); iter++)
             {
@@ -52,8 +52,8 @@ void SearcherBuf::deserialize_index(const std::string& query, const std::string&
                 int term_freq = std::stoi(*iter);
                 iter += term_freq;
 
-                terms[ngram.word].doc_ids.insert(doc_id);
-                terms[ngram.word].term_frequency[doc_id] = term_freq;
+                this->terms[ngram.word].doc_ids.insert(doc_id);
+                this->terms[ngram.word].term_frequency[doc_id] = term_freq;
             }
 
             break;
@@ -69,33 +69,34 @@ void SearcherBuf::store_doc_ids(const std::string& index_path)
     {
         if (doc.is_regular_file())
         {
-            all_doc_ids.push_back(std::stoi(doc.path().stem().string()));
+            this->all_doc_ids.push_back(std::stoi(doc.path().stem().string()));
         }
     }
 }
 
 void SearcherBuf::score_calc()
 {
-    for (const auto& doc_id : all_doc_ids)
+    for (const auto& doc_id : this->all_doc_ids)
     {
         fts::DocScore temp_doc_score = {doc_id, 0};
 
-        for (const auto& [term, attributes] : terms)
+        for (const auto& [term, attributes] : this->terms)
         {
             if (attributes.doc_ids.find(doc_id) != attributes.doc_ids.end())
             {
                 temp_doc_score.score += attributes.term_frequency.at(doc_id)
-                    * log(static_cast<double>(all_doc_ids.size()) / static_cast<double>(attributes.doc_frequency));
+                    * log(static_cast<double>(this->all_doc_ids.size())
+                          / static_cast<double>(attributes.doc_frequency));
             }
         }
 
-        doc_scores.push_back(temp_doc_score);
+        this->doc_scores.push_back(temp_doc_score);
     }
 }
 
 void SearcherBuf::score_sort()
 {
-    std::sort(doc_scores.begin(), doc_scores.end(), [](const fts::DocScore& a, const fts::DocScore& b) {
+    std::sort(this->doc_scores.begin(), this->doc_scores.end(), [](const fts::DocScore& a, const fts::DocScore& b) {
         return (a.score == b.score) ? (a.doc_id < b.doc_id) : (a.score > b.score);
     });
 }
