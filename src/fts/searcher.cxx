@@ -8,13 +8,8 @@
 
 namespace fts {
 
-void SearcherBuf::deserialize_index(
-    const std::string& query,
-    const std::string& index_path,
-    const fts::ConfOptions& config)
+void IndexAccessor::deserialize_index(const std::string& index_path, const std::vector<fts::Ngram>& ngrams)
 {
-    const std::vector<fts::Ngram> ngrams = fts::parse_query(config, query);
-
     for (const auto& ngram : ngrams)
     {
         const std::string word_hash = fts::get_word_hash(ngram.word);
@@ -28,7 +23,7 @@ void SearcherBuf::deserialize_index(
         }
         if (!entrie_doc.is_open())
         {
-            throw std::runtime_error{"Can't open file in SearcherBuf::deserialize_index function"};
+            throw std::runtime_error{"Can't open file in IndexAccessor::deserialize_index function"};
         }
 
         std::string line_from_entrie;
@@ -63,7 +58,7 @@ void SearcherBuf::deserialize_index(
     }
 }
 
-void SearcherBuf::store_doc_ids(const std::string& index_path)
+void IndexAccessor::store_doc_ids(const std::string& index_path)
 {
     for (const auto& doc : std::filesystem::directory_iterator(index_path + "/docs/"))
     {
@@ -74,7 +69,7 @@ void SearcherBuf::store_doc_ids(const std::string& index_path)
     }
 }
 
-void SearcherBuf::score_calc()
+void IndexAccessor::score_calc()
 {
     for (const auto& doc_id : this->all_doc_ids)
     {
@@ -94,7 +89,7 @@ void SearcherBuf::score_calc()
     }
 }
 
-void SearcherBuf::score_sort()
+void IndexAccessor::score_sort()
 {
     std::sort(this->doc_scores.begin(), this->doc_scores.end(), [](const fts::DocScore& a, const fts::DocScore& b) {
         return (a.score == b.score) ? (a.doc_id < b.doc_id) : (a.score > b.score);

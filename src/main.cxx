@@ -87,10 +87,11 @@ int main(int argc, char** argv)
             const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
 
             const std::string query = parse_cmd_line["query"].as<std::string>();
+            const std::vector<fts::Ngram> ngrams = fts::parse_query(config, query);
 
-            fts::SearcherBuf searcher_buf(query, index_path, config);
+            fts::IndexAccessor index_accessor(index_path, ngrams);
 
-            std::vector<fts::DocScore> doc_scores = searcher_buf.get_scores();
+            std::vector<fts::DocScore> doc_scores = index_accessor.get_scores();
 
             for (const auto& doc_score : doc_scores)
             {
