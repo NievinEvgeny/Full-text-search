@@ -85,9 +85,9 @@ int main(int argc, char** argv)
         {
             const std::string query = parse_cmd_line["query"].as<std::string>();
 
-            fts::SearcherBuf searcher_buf;
+            fts::SearcherBuf searcher_buf(query, index_path);
 
-            std::vector<fts::DocScore> doc_scores = searcher_buf.get_scores(query, index_path);
+            std::vector<fts::DocScore> doc_scores = searcher_buf.get_scores();
 
             for (const auto& doc_score : doc_scores)
             {

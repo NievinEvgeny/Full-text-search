@@ -32,7 +32,7 @@ class IndexBuilder
    public:
     const fts::Index& get_index()
     {
-        return index;
+        return this->index;
     }
 
     void add_document(int document_id, const std::string& text, const fts::ConfOptions& conf_options);

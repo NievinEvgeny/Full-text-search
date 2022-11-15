@@ -38,7 +38,18 @@ class SearcherBuf
     void score_sort();
 
    public:
-    const std::vector<DocScore>& get_scores(const std::string& query, const std::string& index_path);
+    SearcherBuf(const std::string& query, const std::string& index_path)
+    {
+        deserialize_index(query, index_path);
+        store_doc_ids(index_path);
+        score_calc();
+        score_sort();
+    }
+
+    const std::vector<DocScore>& get_scores()
+    {
+        return this->doc_scores;
+    }
 };
 
 }  // namespace fts

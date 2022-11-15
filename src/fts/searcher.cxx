@@ -101,13 +101,4 @@ void SearcherBuf::score_sort()
     });
 }
 
-const std::vector<DocScore>& SearcherBuf::get_scores(const std::string& query, const std::string& index_path)
-{
-    deserialize_index(query, index_path);
-    store_doc_ids(index_path);
-    score_calc();
-    score_sort();
-    return doc_scores;
-}
-
 }  // namespace fts
