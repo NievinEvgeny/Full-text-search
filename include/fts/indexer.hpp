@@ -35,7 +35,7 @@ class IndexBuilder
         return this->index;
     }
 
-    void add_document(int document_id, const std::string& text, const fts::ConfOptions& conf_options);
+    void add_document(int document_id, const std::string& text, const fts::ConfOptions& config);
 };
 
 class TextIndexWriter

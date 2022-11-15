@@ -7,11 +7,11 @@
 
 namespace fts {
 
-void IndexBuilder::add_document(int document_id, const std::string& text, const fts::ConfOptions& conf_options)
+void IndexBuilder::add_document(int document_id, const std::string& text, const fts::ConfOptions& config)
 {
     this->index.docs[document_id] = text;
 
-    const std::vector<fts::Ngram> ngrams = fts::parse_query(conf_options, text);
+    const std::vector<fts::Ngram> ngrams = fts::parse_query(config, text);
 
     for (const auto& ngram : ngrams)
     {

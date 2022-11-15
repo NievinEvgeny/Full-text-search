@@ -1,4 +1,5 @@
 #pragma once
+#include <fts/parser.hpp>
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
@@ -29,7 +30,7 @@ class SearcherBuf
 
     std::vector<int> all_doc_ids;
 
-    void deserialize_index(const std::string& query, const std::string& index_path);
+    void deserialize_index(const std::string& query, const std::string& index_path, const fts::ConfOptions& config);
 
     void store_doc_ids(const std::string& index_path);
 
@@ -38,9 +39,9 @@ class SearcherBuf
     void score_sort();
 
    public:
-    SearcherBuf(const std::string& query, const std::string& index_path)
+    SearcherBuf(const std::string& query, const std::string& index_path, const fts::ConfOptions& config)
     {
-        deserialize_index(query, index_path);
+        deserialize_index(query, index_path, config);
         store_doc_ids(index_path);
         score_calc();
         score_sort();

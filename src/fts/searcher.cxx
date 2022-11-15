@@ -8,12 +8,12 @@
 
 namespace fts {
 
-void SearcherBuf::deserialize_index(const std::string& query, const std::string& index_path)
+void SearcherBuf::deserialize_index(
+    const std::string& query,
+    const std::string& index_path,
+    const fts::ConfOptions& config)
 {
-    const nlohmann::json parsed_conf = fts::parse_config(index_path + "/Config.json");
-    const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
-
-    const std::vector<fts::Ngram> ngrams = fts::parse_query(conf_options, query);
+    const std::vector<fts::Ngram> ngrams = fts::parse_query(config, query);
 
     for (const auto& ngram : ngrams)
     {

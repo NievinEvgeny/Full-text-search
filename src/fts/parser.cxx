@@ -50,23 +50,23 @@ nlohmann::json parse_config(const std::string& conf_filename)
 
 fts::ConfOptions parse_json_struct(const nlohmann::json& parsed_conf)
 {
-    fts::ConfOptions conf_options{
+    fts::ConfOptions config{
         parsed_conf.at("stop_words"),
         parsed_conf.at("ngram_min_len"),
         parsed_conf.at("ngram_max_len"),
     };
 
-    if (conf_options.ngram_min_len < 1)
+    if (config.ngram_min_len < 1)
     {
         throw std::runtime_error{"Ngram min length is below 1"};
     }
 
-    if (conf_options.ngram_max_len < conf_options.ngram_min_len)
+    if (config.ngram_max_len < config.ngram_min_len)
     {
         throw std::runtime_error{"Max length of ngram less than min len"};
     }
 
-    return conf_options;
+    return config;
 }
 
 void copy_config(const nlohmann::json& parsed_conf, const std::string& index_path)
@@ -145,7 +145,7 @@ std::vector<Ngram> ngram_generation(const std::vector<std::string>& text_tokens,
     return ngrams;
 }
 
-std::vector<Ngram> parse_query(const fts::ConfOptions& conf_options, const std::string& text)
+std::vector<Ngram> parse_query(const fts::ConfOptions& config, const std::string& text)
 {
     std::vector<std::string> text_tokens;
     std::vector<Ngram> ngrams;
@@ -160,14 +160,14 @@ std::vector<Ngram> parse_query(const fts::ConfOptions& conf_options, const std::
         throw std::runtime_error{"No relevant words"};
     }
 
-    delete_stop_words(text_tokens, conf_options.stop_words);
+    delete_stop_words(text_tokens, config.stop_words);
 
     if (text_tokens.empty())
     {
         throw std::runtime_error{"No relevant words"};
     }
 
-    ngrams = ngram_generation(text_tokens, conf_options.ngram_min_len, conf_options.ngram_max_len);
+    ngrams = ngram_generation(text_tokens, config.ngram_min_len, config.ngram_max_len);
 
     if (ngrams.empty())
     {
