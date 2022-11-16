@@ -1,6 +1,5 @@
 #include <fts/indexer.hpp>
 #include <fts/parser.hpp>
-#include <PicoSHA2/picosha2.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -8,18 +7,16 @@
 
 namespace fts {
 
-void IndexBuilder::add_document(int document_id, const std::string& text, const fts::ConfOptions& conf_options)
+void IndexBuilder::add_document(int document_id, const std::string& text, const fts::ConfOptions& config)
 {
-    index.docs[document_id] = text;
+    this->index.docs[document_id] = text;
 
-    const int hash_required_len = 6;
-    const std::vector<fts::Ngram> ngrams = fts::parse_query(conf_options, text);
+    const std::vector<fts::Ngram> ngrams = fts::parse_query(config, text);
 
     for (const auto& ngram : ngrams)
     {
-        std::string text_hash = picosha2::hash256_hex_string(ngram.word);
-        text_hash.erase(hash_required_len);
-        index.entries[text_hash][ngram.word][document_id].push_back(ngram.index);
+        std::string word_hash = fts::get_word_hash(ngram.word);
+        this->index.entries[word_hash][ngram.word][document_id].push_back(ngram.index);
     }
 }
 
@@ -27,7 +24,7 @@ void TextIndexWriter::write(const fts::Index& index)
 {
     for (const auto& [doc_id, text] : index.docs)
     {
-        std::ofstream current_doc(index_dir_path + "/docs/" += std::to_string(doc_id));
+        std::ofstream current_doc(this->index_dir_path + "/docs/" += std::to_string(doc_id));
 
         if (!current_doc.is_open())
         {
@@ -40,7 +37,7 @@ void TextIndexWriter::write(const fts::Index& index)
     }
     for (const auto& [term_hash, terms] : index.entries)
     {
-        std::ofstream current_entrie(index_dir_path + "/entries/" += term_hash);
+        std::ofstream current_entrie(this->index_dir_path + "/entries/" += term_hash);
 
         for (const auto& [term, docs] : terms)
         {

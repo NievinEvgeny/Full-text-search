@@ -68,14 +68,14 @@ int main(int argc, char** argv)
         {
             const std::string conf_filename = parse_cmd_line["config_file"].as<std::string>();
             const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
-            const fts::ConfOptions conf_options = fts::parse_json_struct(parsed_conf);
+            const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
             fts::copy_config(parsed_conf, index_path);
 
             fts::IndexBuilder indexes;
-            indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", conf_options);  // delete
-            indexes.add_document(238695, "The Matrix Revolution", conf_options);  // delete
-            indexes.add_document(390473, "The Matrix", conf_options);  // delete
-            indexes.add_document(450473, "Peepo the Clown", conf_options);  // delete
+            indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", config);  // delete
+            indexes.add_document(238695, "The Matrix Revolution", config);  // delete
+            indexes.add_document(390473, "The Matrix", config);  // delete
+            indexes.add_document(450473, "Peepo the Clown", config);  // delete
 
             fts::TextIndexWriter index_writer(index_path);
             index_writer.write(indexes.get_index());
@@ -83,11 +83,15 @@ int main(int argc, char** argv)
 
         if (parse_cmd_line.count("searcher"))
         {
+            const nlohmann::json parsed_conf = fts::parse_config(index_path + "/Config.json");
+            const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
+
             const std::string query = parse_cmd_line["query"].as<std::string>();
+            const std::vector<fts::Ngram> ngrams = fts::parse_query(config, query);
 
-            fts::SearcherBuf searcher_buf;
+            fts::IndexAccessor index_accessor(index_path, ngrams);
 
-            std::vector<fts::DocScore> doc_scores = searcher_buf.get_scores(query, index_path);
+            std::vector<fts::DocScore> doc_scores = index_accessor.get_scores();
 
             for (const auto& doc_score : doc_scores)
             {

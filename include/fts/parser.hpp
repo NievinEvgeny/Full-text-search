@@ -19,6 +19,8 @@ struct ConfOptions
     int ngram_max_len = 0;
 };
 
+std::string get_word_hash(const std::string& word);
+
 nlohmann::json parse_config(const std::string& conf_filename);
 
 fts::ConfOptions parse_json_struct(const nlohmann::json& parsed_conf);
@@ -31,6 +33,6 @@ void delete_stop_words(std::vector<std::string>& text_tokens, const std::unorder
 
 std::vector<Ngram> ngram_generation(const std::vector<std::string>& text_tokens, int ngram_min_len, int ngram_max_len);
 
-std::vector<Ngram> parse_query(const fts::ConfOptions& conf_options, const std::string& text);
+std::vector<Ngram> parse_query(const fts::ConfOptions& config, const std::string& text);
 
 }  // namespace fts

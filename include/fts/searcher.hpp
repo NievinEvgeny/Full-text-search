@@ -1,4 +1,5 @@
 #pragma once
+#include <fts/parser.hpp>
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
@@ -21,7 +22,7 @@ struct TermAttributes
     int doc_frequency;
 };
 
-class SearcherBuf
+class IndexAccessor
 {
     std::unordered_map<std::string, fts::TermAttributes> terms;
 
@@ -29,7 +30,7 @@ class SearcherBuf
 
     std::vector<int> all_doc_ids;
 
-    void deserialize_index(const std::string& query, const std::string& index_path);
+    void deserialize_index(const std::string& index_path, const std::vector<fts::Ngram>& ngrams);
 
     void store_doc_ids(const std::string& index_path);
 
@@ -38,7 +39,18 @@ class SearcherBuf
     void score_sort();
 
    public:
-    const std::vector<DocScore>& get_scores(const std::string& query, const std::string& index_path);
+    IndexAccessor(const std::string& index_path, const std::vector<fts::Ngram>& ngrams)
+    {
+        deserialize_index(index_path, ngrams);
+        store_doc_ids(index_path);
+        score_calc();
+        score_sort();
+    }
+
+    const std::vector<DocScore>& get_scores()
+    {
+        return this->doc_scores;
+    }
 };
 
 }  // namespace fts
