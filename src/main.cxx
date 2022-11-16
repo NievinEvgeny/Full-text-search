@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 
             fts::IndexAccessor index_accessor(index_path, ngrams);
 
-            std::vector<fts::DocScore> doc_scores = index_accessor.get_scores();
+            const std::vector<fts::DocScore> doc_scores = index_accessor.get_scores();
 
             for (const auto& doc_score : doc_scores)
             {
