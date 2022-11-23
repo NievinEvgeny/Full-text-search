@@ -36,6 +36,8 @@ class IndexBuilder
     }
 
     void add_document(int document_id, const std::string& text, const fts::ConfOptions& config);
+
+    void parse_csv(const std::string& filename, const fts::ConfOptions& config);
 };
 
 class TextIndexWriter

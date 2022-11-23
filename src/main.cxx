@@ -8,9 +8,7 @@
 #include <filesystem>
 #include <vector>
 
-namespace {
-
-void check_index_directories(const std::string& index_path, size_t indexer, size_t searcher)
+static void check_index_directories(const std::string& index_path, size_t indexer, size_t searcher)
 {
     const std::filesystem::path index(index_path);
     const std::filesystem::path index_docs(index_path + "/docs");
@@ -34,8 +32,6 @@ void check_index_directories(const std::string& index_path, size_t indexer, size
     }
 }
 
-}  // namespace
-
 int main(int argc, char** argv)
 {
     cxxopts::Options options("TextSearcher");
@@ -45,6 +41,7 @@ int main(int argc, char** argv)
         ("indexer", "Indexer call")
         ("searcher", "Searcher call")
         ("i,index_path", "Path for index", cxxopts::value<std::string>()->default_value("index"))
+        ("csv", "Path for *.csv file", cxxopts::value<std::string>()->default_value("books.csv"))
         ("q,query", "Query to search", cxxopts::value<std::string>())
         ("c,config_file", "Config file name (only for indexer)", cxxopts::value<std::string>()->default_value("RunOptions.json"))
         ("h,help", "Print usage");
@@ -72,10 +69,9 @@ int main(int argc, char** argv)
             fts::copy_config(parsed_conf, index_path);
 
             fts::IndexBuilder indexes;
-            indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", config);  // delete
-            indexes.add_document(238695, "The Matrix Revolution", config);  // delete
-            indexes.add_document(390473, "The Matrix", config);  // delete
-            indexes.add_document(450473, "Peepo the Clown", config);  // delete
+
+            const std::string csv_filename = parse_cmd_line["csv"].as<std::string>();
+            indexes.parse_csv(csv_filename, config);
 
             fts::TextIndexWriter index_writer(index_path);
             index_writer.write(indexes.get_index());

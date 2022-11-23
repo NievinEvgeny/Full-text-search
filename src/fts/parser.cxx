@@ -154,25 +154,8 @@ std::vector<Ngram> parse_query(const fts::ConfOptions& config, const std::string
     remove_punctuation(text_copy);
     char_to_lower_case(text_copy);
     text_tokens = string_tokenization(text_copy);
-
-    if (text_tokens.empty())
-    {
-        throw std::runtime_error{"No relevant words"};
-    }
-
     delete_stop_words(text_tokens, config.stop_words);
-
-    if (text_tokens.empty())
-    {
-        throw std::runtime_error{"No relevant words"};
-    }
-
     ngrams = ngram_generation(text_tokens, config.ngram_min_len, config.ngram_max_len);
-
-    if (ngrams.empty())
-    {
-        throw std::runtime_error{"No words that can be used to generate ngrams"};
-    }
 
     return ngrams;
 }
