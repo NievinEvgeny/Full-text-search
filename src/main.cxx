@@ -88,11 +88,7 @@ int main(int argc, char** argv)
             fts::IndexAccessor index_accessor(index_path, ngrams);
 
             const std::vector<fts::DocScore> doc_scores = index_accessor.get_scores();
-
-            for (const auto& doc_score : doc_scores)
-            {
-                std::cout << doc_score.doc_id << ' ' << doc_score.score << '\n';
-            }
+            index_accessor.print_scores();
         }
     }
 

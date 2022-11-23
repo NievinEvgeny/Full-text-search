@@ -38,6 +38,8 @@ class IndexAccessor
 
     void score_sort();
 
+    bool print_scores_in_range(const int& range);
+
    public:
     IndexAccessor(const std::string& index_path, const std::vector<fts::Ngram>& ngrams)
     {
@@ -51,6 +53,8 @@ class IndexAccessor
     {
         return this->doc_scores;
     }
+
+    void print_scores();
 };
 
 }  // namespace fts
