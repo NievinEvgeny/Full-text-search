@@ -1,7 +1,8 @@
 set(target_name fts)
 
 add_library(${target_name} STATIC
-    parser.cxx
+    conf_parse.cxx
+    query_parse.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/parser.hpp
     indexer.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/indexer.hpp
