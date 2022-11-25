@@ -28,6 +28,13 @@ void IndexBuilder::add_document(int document_id, const std::string& text, const 
 
 void IndexBuilder::parse_csv(const std::string& filename, const fts::ConfOptions& config)
 {
+    const std::filesystem::path entrie_doc_path(filename);
+
+    if (!std::filesystem::exists(entrie_doc_path))
+    {
+        throw std::runtime_error{'"' + filename + '"' + " not found"};
+    }
+
     rapidcsv::Document csv_doc(filename, rapidcsv::LabelParams(0, 0), rapidcsv::SeparatorParams(','));
 
     const std::string book_id_col = "bookID";

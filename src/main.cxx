@@ -41,9 +41,9 @@ int main(int argc, char** argv)
         ("indexer", "Indexer call")
         ("searcher", "Searcher call")
         ("i,index_path", "Path for index", cxxopts::value<std::string>()->default_value("index"))
-        ("csv", "Path for *.csv file", cxxopts::value<std::string>()->default_value("books.csv"))
+        ("c,csv", "Path for *.csv file", cxxopts::value<std::string>()->default_value("books.csv"))
         ("q,query", "Query to search", cxxopts::value<std::string>())
-        ("c,config_file", "Config file name (only for indexer)", cxxopts::value<std::string>()->default_value("RunOptions.json"))
+        ("config,config_file", "Config file name (only for indexer)", cxxopts::value<std::string>()->default_value("RunOptions.json"))
         ("h,help", "Print usage");
     // clang-format on
 
