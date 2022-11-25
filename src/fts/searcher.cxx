@@ -81,9 +81,9 @@ void IndexAccessor::score_calc()
         {
             if (attributes.doc_ids.find(doc_id) != attributes.doc_ids.end())
             {
-                temp_doc_score.score += attributes.term_frequency.at(doc_id)
-                    * log(static_cast<double>(this->all_doc_ids.size())
-                          / static_cast<double>(attributes.doc_frequency));
+                temp_doc_score.score += std::sqrt(attributes.term_frequency.at(doc_id))
+                    * std::log(static_cast<double>(this->all_doc_ids.size())
+                               / static_cast<double>(attributes.doc_frequency));
             }
         }
 
@@ -106,7 +106,7 @@ void IndexAccessor::print_scores()
     }
 
     const int num_of_ranges = 3;
-    const std::array<int, num_of_ranges> ranges = {50, 200, 500};
+    const std::array<int, num_of_ranges> ranges = {30, 150, 350};
     bool range_found = false;
 
     for (const auto& range : ranges)
@@ -115,7 +115,7 @@ void IndexAccessor::print_scores()
         const size_t terms_num = std::min(this->terms.size(), terms_max_num);
 
         double min_score
-            = static_cast<double>(terms_num) * ((log(static_cast<double>(this->all_doc_ids.size()) / range)));
+            = static_cast<double>(terms_num) * ((std::log(static_cast<double>(this->all_doc_ids.size()) / range)));
 
         if (this->doc_scores.at(0).score > min_score)
         {
