@@ -1,4 +1,4 @@
-#include <fts/parser.hpp>
+#include <fts/conf_parser.hpp>
 #include <fts/indexer.hpp>
 #include <fts/searcher.hpp>
 #include <nlohmann/json.hpp>

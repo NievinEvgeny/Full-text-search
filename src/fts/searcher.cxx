@@ -1,5 +1,5 @@
 #include <fts/searcher.hpp>
-#include <fts/parser.hpp>
+#include <fts/query_parser.hpp>
 #include <string>
 #include <filesystem>
 #include <fstream>

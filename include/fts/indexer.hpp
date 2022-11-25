@@ -1,5 +1,5 @@
 #pragma once
-#include <fts/parser.hpp>
+#include <fts/conf_parser.hpp>
 #include <unordered_map>
 #include <string>
 #include <vector>

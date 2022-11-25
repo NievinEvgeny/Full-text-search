@@ -1,4 +1,4 @@
-#include <fts/parser.hpp>
+#include <fts/query_parser.hpp>
 #include <gtest/gtest.h>
 #include <string>
 #include <unordered_set>

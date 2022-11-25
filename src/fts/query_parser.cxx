@@ -1,4 +1,5 @@
-#include <fts/parser.hpp>
+#include <fts/conf_parser.hpp>
+#include <fts/query_parser.hpp>
 #include <PicoSHA2/picosha2.h>
 #include <vector>
 #include <string>

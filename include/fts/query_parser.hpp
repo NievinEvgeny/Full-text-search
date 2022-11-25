@@ -1,7 +1,7 @@
 #pragma once
-#include <nlohmann/json.hpp>
-#include <string>
+#include <fts/conf_parser.hpp>
 #include <vector>
+#include <string>
 #include <unordered_set>
 
 namespace fts {
@@ -12,20 +12,7 @@ struct Ngram
     std::string word;
 };
 
-struct ConfOptions
-{
-    const std::unordered_set<std::string> stop_words;
-    int ngram_min_len = 0;
-    int ngram_max_len = 0;
-};
-
 std::string get_word_hash(const std::string& word);
-
-nlohmann::json parse_config(const std::string& conf_filename);
-
-fts::ConfOptions parse_json_struct(const nlohmann::json& parsed_conf);
-
-void copy_config(const nlohmann::json& parsed_conf, const std::string& index_path);
 
 std::vector<std::string> string_tokenization(const std::string& text);
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <fts/parser.hpp>
+#include <fts/query_parser.hpp>
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
