@@ -98,24 +98,6 @@ void IndexAccessor::score_sort()
     });
 }
 
-bool IndexAccessor::print_scores_in_range(const int& range)
-{
-    const size_t terms_max_num = 20;
-    const size_t terms_num = std::min(this->terms.size(), terms_max_num);
-
-    double min_score = static_cast<double>(terms_num) * ((log(static_cast<double>(this->all_doc_ids.size()) / range)));
-
-    if (this->doc_scores.at(0).score > min_score)
-    {
-        for (size_t i = 0; this->doc_scores.at(i).score > min_score; i++)
-        {
-            std::cout << this->doc_scores.at(i).doc_id << ' ' << this->doc_scores.at(i).score << '\n';
-        }
-        return true;
-    }
-    return false;
-}
-
 void IndexAccessor::print_scores()
 {
     if (this->doc_scores.empty())
@@ -129,8 +111,19 @@ void IndexAccessor::print_scores()
 
     for (const auto& range : ranges)
     {
-        if ((range_found = print_scores_in_range(range)) == 1)
+        const size_t terms_max_num = 20;
+        const size_t terms_num = std::min(this->terms.size(), terms_max_num);
+
+        double min_score
+            = static_cast<double>(terms_num) * ((log(static_cast<double>(this->all_doc_ids.size()) / range)));
+
+        if (this->doc_scores.at(0).score > min_score)
         {
+            for (size_t i = 0; this->doc_scores.at(i).score > min_score; i++)
+            {
+                std::cout << this->doc_scores.at(i).doc_id << ' ' << this->doc_scores.at(i).score << '\n';
+            }
+            range_found = true;
             break;
         }
     }
