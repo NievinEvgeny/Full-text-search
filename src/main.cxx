@@ -14,7 +14,7 @@ static void check_index_directories(const std::string& index_path, size_t indexe
     const std::filesystem::path index_docs(index_path + "/docs");
     const std::filesystem::path index_entries(index_path + "/entries");
 
-    const std::vector<std::filesystem::path> directories = {index, index_docs, index_entries};
+    const std::vector<std::filesystem::path> directories{index, index_docs, index_entries};
 
     for (const auto& dir : directories)
     {

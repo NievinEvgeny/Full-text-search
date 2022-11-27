@@ -106,7 +106,7 @@ void IndexAccessor::print_scores()
     }
 
     const int num_of_ranges = 3;
-    const std::array<int, num_of_ranges> ranges = {30, 150, 350};
+    const std::array<int, num_of_ranges> ranges{30, 150, 350};
 
     for (const auto& range : ranges)
     {
