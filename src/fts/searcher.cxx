@@ -107,7 +107,6 @@ void IndexAccessor::print_scores()
 
     const int num_of_ranges = 3;
     const std::array<int, num_of_ranges> ranges = {30, 150, 350};
-    bool range_found = false;
 
     for (const auto& range : ranges)
     {
@@ -123,15 +122,11 @@ void IndexAccessor::print_scores()
             {
                 std::cout << this->doc_scores.at(i).doc_id << ' ' << this->doc_scores.at(i).score << '\n';
             }
-            range_found = true;
-            break;
+            return;
         }
     }
 
-    if (!range_found)
-    {
-        std::cout << "Nothing was found for your query" << '\n';
-    }
+    std::cout << "Nothing was found for your query" << '\n';
 }
 
 }  // namespace fts
