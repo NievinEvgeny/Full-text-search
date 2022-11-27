@@ -13,3 +13,6 @@
 [submodule "external/rapidcsv"]
 	path = external/rapidcsv
 	url = git@github.com:d99kris/rapidcsv.git
+[submodule "external/replxx"]
+	path = external/replxx
+	url = git@github.com:AmokHuginnsson/replxx.git
