@@ -1,6 +1,7 @@
 #include <fts/conf_parser.hpp>
 #include <fts/indexer.hpp>
 #include <fts/searcher.hpp>
+#include <fts/replxx-wrapper.hpp>
 #include <nlohmann/json.hpp>
 #include <cxxopts.hpp>
 #include <iostream>
@@ -82,7 +83,17 @@ int main(int argc, char** argv)
             const nlohmann::json parsed_conf = fts::parse_config(index_path + "/Config.json");
             const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
 
-            const std::string query = parse_cmd_line["query"].as<std::string>();
+            std::string query;
+
+            if (!parse_cmd_line.count("query"))
+            {
+                query = replxx::wrapper::getline();
+            }
+            else
+            {
+                query = parse_cmd_line["query"].as<std::string>();
+            }
+
             const std::vector<fts::Ngram> ngrams = fts::parse_query(config, query);
 
             fts::IndexAccessor index_accessor(index_path, ngrams);
