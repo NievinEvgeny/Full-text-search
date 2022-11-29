@@ -38,7 +38,7 @@ void IndexAccessor::deserialize_index(const std::string& index_path, const std::
                 continue;
             }
 
-            const std::vector<std::string> line_tokens = string_tokenization(line_from_entrie);
+            const std::vector<std::string> line_tokens = string_tokenize(line_from_entrie);
 
             this->terms[ngram.word].doc_frequency = std::stoi(*(line_tokens.begin() + 1));
 
