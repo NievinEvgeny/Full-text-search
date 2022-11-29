@@ -3,36 +3,36 @@
 #include <string>
 #include <unordered_set>
 
-TEST(string_tokenization, simple)
+TEST(string_tokenize, simple)
 {
     std::vector<std::string> expect{"dr", "jekyll", "and", "mr", "hyde"};
     std::string text = "dr jekyll and mr hyde";
-    std::vector<std::string> real = fts::string_tokenization(text);
+    std::vector<std::string> real = fts::string_tokenize(text);
     for (int i = 0; i < 5; i++)
     {
         EXPECT_TRUE(expect[i] == real[i]);
     }
 }
 
-TEST(string_tokenization, white_spaces)
+TEST(string_tokenize, white_spaces)
 {
     std::string text = "   ";
-    std::vector<std::string> real = fts::string_tokenization(text);
+    std::vector<std::string> real = fts::string_tokenize(text);
     EXPECT_TRUE(real.empty());
 }
 
-TEST(string_tokenization, empty)
+TEST(string_tokenize, empty)
 {
     std::string text = "";
-    std::vector<std::string> real = fts::string_tokenization(text);
+    std::vector<std::string> real = fts::string_tokenize(text);
     EXPECT_TRUE(real.empty());
 }
 
-TEST(string_tokenization, white_spaces_everywhere)
+TEST(string_tokenize, white_spaces_everywhere)
 {
     std::vector<std::string> expect{5, "a"};
     std::string text = "    a a a  a  a    ";
-    std::vector<std::string> real = fts::string_tokenization(text);
+    std::vector<std::string> real = fts::string_tokenize(text);
     for (int i = 0; i < 5; i++)
     {
         EXPECT_TRUE(expect[i] == real[i]);
@@ -68,7 +68,7 @@ TEST(delete_stop_words, numbers_in_stop_words)
     EXPECT_TRUE(expect.size() == real.size());
 }
 
-TEST(ngram_generation, simple)
+TEST(ngram_generate, simple)
 {
     int ngram_min_length = 3, ngram_max_length = 6;
     std::vector<std::string> text_tokens{"jekyll", "hyde"};
@@ -76,7 +76,7 @@ TEST(ngram_generation, simple)
     std::vector<fts::Ngram> expect = {{0, "jek"}, {0, "jeky"}, {0, "jekyl"}, {0, "jekyll"}, {1, "hyd"}, {1, "hyde"}};
     std::vector<fts::Ngram> real;
 
-    real = fts::ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
+    real = fts::ngram_generate(text_tokens, ngram_min_length, ngram_max_length);
     for (int i = 0; i < 6; i++)
     {
         EXPECT_TRUE(expect[i].index == real[i].index);
@@ -84,7 +84,7 @@ TEST(ngram_generation, simple)
     }
 }
 
-TEST(ngram_generation, non_relevant_words)
+TEST(ngram_generate, non_relevant_words)
 {
     int ngram_min_length = 3, ngram_max_length = 6;
     std::vector<std::string> text_tokens;
@@ -94,12 +94,12 @@ TEST(ngram_generation, non_relevant_words)
     std::vector<fts::Ngram> expect;
     std::vector<fts::Ngram> real;
 
-    real = fts::ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
+    real = fts::ngram_generate(text_tokens, ngram_min_length, ngram_max_length);
 
     EXPECT_TRUE(expect.size() == real.size());
 }
 
-TEST(ngram_generation, big_and_small_words)
+TEST(ngram_generate, big_and_small_words)
 {
     int ngram_min_length = 3, ngram_max_length = 6;
     std::vector<std::string> text_tokens;
@@ -109,7 +109,7 @@ TEST(ngram_generation, big_and_small_words)
     std::vector<fts::Ngram> expect = {{0, "pee"}, {0, "peep"}, {0, "peepo"}, {0, "peepoc"}};
     std::vector<fts::Ngram> real;
 
-    real = fts::ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
+    real = fts::ngram_generate(text_tokens, ngram_min_length, ngram_max_length);
     for (int i = 0; i < 4; i++)
     {
         EXPECT_TRUE(expect[i].index == real[i].index);
