@@ -1,7 +1,7 @@
 #include <fts/conf_parser.hpp>
 #include <fts/indexer.hpp>
 #include <gtest/gtest.h>
-#include <PicoSHA2/picosha2.h>
+#include <fts/word_hash.hpp>
 #include <string>
 
 TEST(add_document, num_of_added_docs)
@@ -60,10 +60,8 @@ TEST(add_document, check_rewrited_doc)
     indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", conf_options);
     indexes.add_document(103975, "The pepega", conf_options);
 
-    const int hash_required_len = 6;
     const std::string term = "pepega";
-    std::string text_hash = picosha2::hash256_hex_string(term);
-    text_hash.erase(hash_required_len);
+    std::string text_hash = fts::get_word_hash(term);
 
     EXPECT_TRUE(indexes.get_index().docs.at(103975) == "The pepega");
 }
@@ -95,10 +93,8 @@ TEST(add_document, check_num_of_docs_with_term)
     indexes.add_document(238695, "The Matrix Revolution", conf_options);
     indexes.add_document(390473, "The Matrix", conf_options);
 
-    const int hash_required_len = 6;
     const std::string term = "mat";
-    std::string text_hash = picosha2::hash256_hex_string(term);
-    text_hash.erase(hash_required_len);
+    std::string text_hash = fts::get_word_hash(term);
 
     EXPECT_TRUE(indexes.get_index().entries.at(text_hash).at(term).size() == 3);
 }
@@ -115,10 +111,8 @@ TEST(add_document, num_of_docs_with_term_is_zero)
     indexes.add_document(238695, "The Matrix Revolution", conf_options);
     indexes.add_document(390473, "The Matrix", conf_options);
 
-    const int hash_required_len = 6;
     const std::string term = "clown";
-    std::string text_hash = picosha2::hash256_hex_string(term);
-    text_hash.erase(hash_required_len);
+    std::string text_hash = fts::get_word_hash(term);
 
     EXPECT_THROW(indexes.get_index().entries.at(text_hash).at(term).size(), std::out_of_range);
 }
@@ -135,10 +129,8 @@ TEST(add_document, check_term_positions_in_doc)
     indexes.add_document(238695, "The Matrix Revolution", conf_options);
     indexes.add_document(390473, "The Matrix", conf_options);
 
-    const int hash_required_len = 6;
     const std::string term = "matrix";
-    std::string text_hash = picosha2::hash256_hex_string(term);
-    text_hash.erase(hash_required_len);
+    std::string text_hash = fts::get_word_hash(term);
 
     std::vector<int> exp{0, 1, 4};
 
