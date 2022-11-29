@@ -1,5 +1,6 @@
 #include <fts/searcher.hpp>
 #include <fts/query_parser.hpp>
+#include <fts/word_hash.hpp>
 #include <string>
 #include <filesystem>
 #include <fstream>

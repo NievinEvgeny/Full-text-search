@@ -11,6 +11,8 @@ add_library(${target_name} STATIC
     ${PROJECT_SOURCE_DIR}/include/fts/searcher.hpp
     replxx-wrapper.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/replxx-wrapper.hpp
+    word_hash.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/word_hash.hpp
 )
 
 include(CompileOptions)
