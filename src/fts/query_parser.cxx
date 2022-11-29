@@ -23,6 +23,41 @@ static void remove_punctuation(std::string& text)
     std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return fts::punct_to_space(c); });
 }
 
+static void delete_stop_words(std::vector<std::string>& text_tokens, const std::unordered_set<std::string>& stop_words)
+{
+    text_tokens.erase(
+        std::remove_if(
+            text_tokens.begin(),
+            text_tokens.end(),
+            [&](const std::string& token) { return (stop_words.find(token) != stop_words.end()); }),
+        text_tokens.end());
+}
+
+static std::vector<fts::Ngram> ngram_generate(const std::vector<std::string>& text_tokens, int min_len, int max_len)
+{
+    std::vector<fts::Ngram> ngrams;
+    int index = 0;
+
+    for (const auto& text_token : text_tokens)
+    {
+        if (static_cast<int>(text_token.size()) < min_len)
+        {
+            continue;
+        }
+
+        int temp_max_len = std::min(max_len, static_cast<int>(text_token.size()));
+
+        for (int j = min_len; j <= temp_max_len; j++)
+        {
+            fts::Ngram temp_ngram{index, text_token.substr(0, j)};
+            ngrams.push_back(temp_ngram);
+        }
+        index++;
+    }
+
+    return ngrams;
+}
+
 std::vector<std::string> string_tokenize(const std::string& text)
 {
     std::vector<std::string> text_tokens;
@@ -49,45 +84,10 @@ std::vector<std::string> string_tokenize(const std::string& text)
     return text_tokens;
 }
 
-void delete_stop_words(std::vector<std::string>& text_tokens, const std::unordered_set<std::string>& stop_words)
-{
-    text_tokens.erase(
-        std::remove_if(
-            text_tokens.begin(),
-            text_tokens.end(),
-            [&](const std::string& token) { return (stop_words.find(token) != stop_words.end()); }),
-        text_tokens.end());
-}
-
-std::vector<Ngram> ngram_generate(const std::vector<std::string>& text_tokens, int ngram_min_len, int ngram_max_len)
-{
-    std::vector<Ngram> ngrams;
-    int index = 0;
-
-    for (const auto& text_token : text_tokens)
-    {
-        if (static_cast<int>(text_token.size()) < ngram_min_len)
-        {
-            continue;
-        }
-
-        int temp_max_len = std::min(ngram_max_len, static_cast<int>(text_token.size()));
-
-        for (int j = ngram_min_len; j <= temp_max_len; j++)
-        {
-            Ngram temp_ngram{index, text_token.substr(0, j)};
-            ngrams.push_back(temp_ngram);
-        }
-        index++;
-    }
-
-    return ngrams;
-}
-
-std::vector<Ngram> parse_query(const fts::ConfOptions& config, const std::string& text)
+std::vector<fts::Ngram> parse_query(const fts::ConfOptions& config, const std::string& text)
 {
     std::vector<std::string> text_tokens;
-    std::vector<Ngram> ngrams;
+    std::vector<fts::Ngram> ngrams;
     std::string text_copy = text;
 
     remove_punctuation(text_copy);

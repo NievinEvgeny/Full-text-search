@@ -1,3 +1,4 @@
+#include <fts/conf_parser.hpp>
 #include <fts/indexer.hpp>
 #include <gtest/gtest.h>
 #include <PicoSHA2/picosha2.h>
