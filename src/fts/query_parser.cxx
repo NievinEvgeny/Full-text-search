@@ -1,6 +1,7 @@
 #include <fts/conf_parser.hpp>
 #include <fts/query_parser.hpp>
 #include <vector>
+#include <algorithm>
 #include <string>
 #include <unordered_set>
 #include <cctype>
@@ -50,14 +51,12 @@ std::vector<std::string> string_tokenize(const std::string& text)
 
 void delete_stop_words(std::vector<std::string>& text_tokens, const std::unordered_set<std::string>& stop_words)
 {
-    for (std::size_t i = 0; i < text_tokens.size(); i++)
-    {
-        if (stop_words.find(text_tokens[i]) != stop_words.end())
-        {
-            text_tokens.erase(text_tokens.begin() + static_cast<int>(i));
-            i--;
-        }
-    }
+    text_tokens.erase(
+        std::remove_if(
+            text_tokens.begin(),
+            text_tokens.end(),
+            [&](const std::string& token) { return (stop_words.find(token) != stop_words.end()); }),
+        text_tokens.end());
 }
 
 std::vector<Ngram> ngram_generate(const std::vector<std::string>& text_tokens, int ngram_min_len, int ngram_max_len)
