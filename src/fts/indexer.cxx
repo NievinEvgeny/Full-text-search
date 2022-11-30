@@ -10,9 +10,9 @@
 
 namespace fts {
 
-void IndexBuilder::add_document(int document_id, const std::string& text, const fts::ConfOptions& config)
+void IndexBuilder::add_document(int document_id, const std::string& text)
 {
-    const std::vector<fts::Ngram> ngrams = fts::parse_query(config, text);
+    const std::vector<fts::Ngram> ngrams = fts::parse_query(this->config, text);
 
     if (ngrams.empty())
     {
@@ -28,7 +28,7 @@ void IndexBuilder::add_document(int document_id, const std::string& text, const 
     }
 }
 
-void IndexBuilder::parse_csv(const std::string& filename, const fts::ConfOptions& config)
+void IndexBuilder::parse_csv(const std::string& filename)
 {
     const std::filesystem::path entrie_doc_path(filename);
 
@@ -47,7 +47,7 @@ void IndexBuilder::parse_csv(const std::string& filename, const fts::ConfOptions
 
     for (size_t i = 0; i < book_ids.size(); i++)
     {
-        this->add_document(book_ids.at(i), csv_doc.GetCell<std::string>(book_title_col, i), config);
+        this->add_document(book_ids.at(i), csv_doc.GetCell<std::string>(book_title_col, i));
     }
 }
 

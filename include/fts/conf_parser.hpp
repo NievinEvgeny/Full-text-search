@@ -8,8 +8,8 @@ namespace fts {
 struct ConfOptions
 {
     const std::unordered_set<std::string> stop_words;
-    int ngram_min_len = 0;
-    int ngram_max_len = 0;
+    const int ngram_min_len;
+    const int ngram_max_len;
 };
 
 nlohmann::json parse_config(const std::string& conf_filename);

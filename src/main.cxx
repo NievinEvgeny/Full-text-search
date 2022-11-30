@@ -40,10 +40,10 @@ static void build_index(const cxxopts::ParseResult& parse_cmd_line, const std::s
     const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
     fts::copy_config(parsed_conf, index_path);
 
-    fts::IndexBuilder indexes;
+    fts::IndexBuilder indexes{config};
 
     const std::string csv_filename = parse_cmd_line["csv"].as<std::string>();
-    indexes.parse_csv(csv_filename, config);
+    indexes.parse_csv(csv_filename);
 
     fts::TextIndexWriter index_writer(index_path);
     index_writer.write(indexes.get_index());

@@ -14,11 +14,11 @@ TEST(IndexAccessor, check_scores)
     const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
     const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
 
-    fts::IndexBuilder indexes;
+    fts::IndexBuilder indexes{config};
 
-    indexes.add_document(1, "The Matrix", config);  // delete
-    indexes.add_document(2, "The Clown", config);  // delete
-    indexes.add_document(3, "The PoroSad", config);  // delete
+    indexes.add_document(1, "The Matrix");
+    indexes.add_document(2, "The Clown");
+    indexes.add_document(3, "The PoroSad");
 
     const std::string temp_dir = std::filesystem::temp_directory_path().string();
     const std::filesystem::path index_docs(temp_dir + "/docs");
@@ -57,10 +57,10 @@ TEST(IndexAccessor, score_sort_stability)
     const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
     const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
 
-    fts::IndexBuilder indexes;
+    fts::IndexBuilder indexes{config};
 
-    indexes.add_document(1, "The Matrix", config);  // delete
-    indexes.add_document(2, "The Matrix", config);  // delete
+    indexes.add_document(1, "The Matrix");
+    indexes.add_document(2, "The Matrix");
 
     const std::string temp_dir = std::filesystem::temp_directory_path().string();
     const std::filesystem::path index_docs(temp_dir + "/docs");
