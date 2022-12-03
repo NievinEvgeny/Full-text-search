@@ -90,11 +90,11 @@ std::vector<fts::Ngram> parse_query(const fts::ConfOptions& config, const std::s
     std::vector<fts::Ngram> ngrams;
     std::string text_copy = text;
 
-    remove_punctuation(text_copy);
-    char_to_lower_case(text_copy);
-    text_tokens = string_tokenize(text_copy);
-    delete_stop_words(text_tokens, config.stop_words);
-    ngrams = ngram_generate(text_tokens, config.ngram_min_len, config.ngram_max_len);
+    fts::remove_punctuation(text_copy);
+    fts::char_to_lower_case(text_copy);
+    text_tokens = fts::string_tokenize(text_copy);
+    fts::delete_stop_words(text_tokens, config.stop_words);
+    ngrams = fts::ngram_generate(text_tokens, config.ngram_min_len, config.ngram_max_len);
 
     return ngrams;
 }
