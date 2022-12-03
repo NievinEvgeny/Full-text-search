@@ -49,7 +49,7 @@ class IndexAccessor
 
     const std::vector<DocScore>& get_scores()
     {
-        return this->doc_scores;
+        return doc_scores;
     }
 
     void print_scores();

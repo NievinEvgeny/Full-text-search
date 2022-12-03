@@ -40,7 +40,7 @@ void IndexAccessor::deserialize_index(const std::string& index_path, const std::
 
             const std::vector<std::string> line_tokens = string_tokenize(line_from_entrie);
 
-            this->terms[ngram.word].doc_frequency = std::stoi(*(line_tokens.begin() + 1));
+            terms[ngram.word].doc_frequency = std::stoi(*(line_tokens.begin() + 1));
 
             for (auto iter = line_tokens.begin() + 2; iter != line_tokens.end(); iter++)
             {
@@ -50,8 +50,8 @@ void IndexAccessor::deserialize_index(const std::string& index_path, const std::
                 int term_freq = std::stoi(*iter);
                 iter += term_freq;
 
-                this->terms[ngram.word].doc_ids.insert(doc_id);
-                this->terms[ngram.word].term_frequency[doc_id] = term_freq;
+                terms[ngram.word].doc_ids.insert(doc_id);
+                terms[ngram.word].term_frequency[doc_id] = term_freq;
             }
 
             break;
@@ -67,41 +67,40 @@ void IndexAccessor::store_doc_ids(const std::string& index_path)
     {
         if (doc.is_regular_file())
         {
-            this->all_doc_ids.push_back(std::stoi(doc.path().stem().string()));
+            all_doc_ids.push_back(std::stoi(doc.path().stem().string()));
         }
     }
 }
 
 void IndexAccessor::score_calc()
 {
-    for (const auto& doc_id : this->all_doc_ids)
+    for (const auto& doc_id : all_doc_ids)
     {
         fts::DocScore temp_doc_score = {doc_id, 0};
 
-        for (const auto& [term, attributes] : this->terms)
+        for (const auto& [term, attributes] : terms)
         {
             if (attributes.doc_ids.find(doc_id) != attributes.doc_ids.end())
             {
                 temp_doc_score.score += std::sqrt(attributes.term_frequency.at(doc_id))
-                    * std::log(static_cast<double>(this->all_doc_ids.size())
-                               / static_cast<double>(attributes.doc_frequency));
+                    * std::log(static_cast<double>(all_doc_ids.size()) / static_cast<double>(attributes.doc_frequency));
             }
         }
 
-        this->doc_scores.push_back(temp_doc_score);
+        doc_scores.push_back(temp_doc_score);
     }
 }
 
 void IndexAccessor::score_sort()
 {
-    std::sort(this->doc_scores.begin(), this->doc_scores.end(), [](const fts::DocScore& a, const fts::DocScore& b) {
+    std::sort(doc_scores.begin(), doc_scores.end(), [](const fts::DocScore& a, const fts::DocScore& b) {
         return (a.score == b.score) ? (a.doc_id < b.doc_id) : (a.score > b.score);
     });
 }
 
 void IndexAccessor::print_scores()
 {
-    if (this->doc_scores.empty())
+    if (doc_scores.empty())
     {
         return;
     }
@@ -112,16 +111,16 @@ void IndexAccessor::print_scores()
     for (const auto& range : ranges)
     {
         const size_t terms_max_num = 20;
-        const size_t terms_num = std::min(this->terms.size(), terms_max_num);
+        const size_t terms_num = std::min(terms.size(), terms_max_num);
 
         double min_score
-            = static_cast<double>(terms_num) * ((std::log(static_cast<double>(this->all_doc_ids.size()) / range)));
+            = static_cast<double>(terms_num) * ((std::log(static_cast<double>(all_doc_ids.size()) / range)));
 
-        if (this->doc_scores.at(0).score > min_score)
+        if (doc_scores.at(0).score > min_score)
         {
-            for (size_t i = 0; this->doc_scores.at(i).score > min_score; i++)
+            for (size_t i = 0; doc_scores.at(i).score > min_score; i++)
             {
-                std::cout << this->doc_scores.at(i).doc_id << ' ' << this->doc_scores.at(i).score << '\n';
+                std::cout << doc_scores.at(i).doc_id << ' ' << doc_scores.at(i).score << '\n';
             }
             return;
         }

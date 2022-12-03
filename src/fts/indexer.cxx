@@ -12,19 +12,19 @@ namespace fts {
 
 void IndexBuilder::add_document(int document_id, const std::string& text)
 {
-    const std::vector<fts::Ngram> ngrams = fts::parse_query(this->config, text);
+    const std::vector<fts::Ngram> ngrams = fts::parse_query(config, text);
 
     if (ngrams.empty())
     {
         return;
     }
 
-    this->index.docs[document_id] = text;
+    index.docs[document_id] = text;
 
     for (const auto& ngram : ngrams)
     {
         std::string word_hash = fts::get_word_hash(ngram.word);
-        this->index.entries[word_hash][ngram.word][document_id].push_back(ngram.index);
+        index.entries[word_hash][ngram.word][document_id].push_back(ngram.index);
     }
 }
 
@@ -47,7 +47,7 @@ void IndexBuilder::parse_csv(const std::string& filename)
 
     for (size_t i = 0; i < book_ids.size(); i++)
     {
-        this->add_document(book_ids.at(i), csv_doc.GetCell<std::string>(book_title_col, i));
+        add_document(book_ids.at(i), csv_doc.GetCell<std::string>(book_title_col, i));
     }
 }
 
@@ -114,9 +114,9 @@ static void entries_serialize(const std::string& index_dir_path, const fts::Inde
 
 void TextIndexWriter::write(const fts::Index& index)
 {
-    fts::config_serialize(this->index_dir_path, this->config);
-    fts::docs_serialize(this->index_dir_path, index);
-    fts::entries_serialize(this->index_dir_path, index);
+    fts::config_serialize(index_dir_path, config);
+    fts::docs_serialize(index_dir_path, index);
+    fts::entries_serialize(index_dir_path, index);
 }
 
 }  // namespace fts
