@@ -11,8 +11,7 @@
 TEST(IndexAccessor, check_scores)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
-    const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
 
     fts::IndexBuilder indexes{config};
 
@@ -54,8 +53,7 @@ TEST(IndexAccessor, check_scores)
 TEST(IndexAccessor, score_sort_stability)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
-    const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
 
     fts::IndexBuilder indexes{config};
 

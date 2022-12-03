@@ -50,8 +50,10 @@ class TextIndexWriter
 {
     const std::string index_dir_path;
 
+    const fts::ConfOptions config;
+
    public:
-    explicit TextIndexWriter(std::string path) : index_dir_path(std::move(path))
+    TextIndexWriter(std::string path, fts::ConfOptions conf) : index_dir_path(std::move(path)), config(std::move(conf))
     {
     }
 

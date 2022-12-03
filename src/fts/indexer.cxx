@@ -51,11 +51,25 @@ void IndexBuilder::parse_csv(const std::string& filename)
     }
 }
 
-void TextIndexWriter::write(const fts::Index& index)
+static void config_serialize(const std::string& index_dir_path, const fts::ConfOptions& config)
+{
+    std::ofstream conf_copy_file(index_dir_path + "/Config.json");
+
+    if (!conf_copy_file.is_open())
+    {
+        throw std::runtime_error{"Can't open file in serialize_config function"};
+    }
+
+    fts::print_config_to_json(conf_copy_file, config);
+
+    conf_copy_file.close();
+}
+
+static void docs_serialize(const std::string& index_dir_path, const fts::Index& index)
 {
     for (const auto& [doc_id, text] : index.docs)
     {
-        std::ofstream current_doc(this->index_dir_path + "/docs/" += std::to_string(doc_id));
+        std::ofstream current_doc(index_dir_path + "/docs/" += std::to_string(doc_id));
 
         if (!current_doc.is_open())
         {
@@ -66,9 +80,13 @@ void TextIndexWriter::write(const fts::Index& index)
 
         current_doc.close();
     }
+}
+
+static void entries_serialize(const std::string& index_dir_path, const fts::Index& index)
+{
     for (const auto& [term_hash, terms] : index.entries)
     {
-        std::ofstream current_entrie(this->index_dir_path + "/entries/" += term_hash);
+        std::ofstream current_entrie(index_dir_path + "/entries/" += term_hash);
 
         for (const auto& [term, docs] : terms)
         {
@@ -92,6 +110,13 @@ void TextIndexWriter::write(const fts::Index& index)
         }
         current_entrie.close();
     }
+}
+
+void TextIndexWriter::write(const fts::Index& index)
+{
+    fts::config_serialize(this->index_dir_path, this->config);
+    fts::docs_serialize(this->index_dir_path, index);
+    fts::entries_serialize(this->index_dir_path, index);
 }
 
 }  // namespace fts

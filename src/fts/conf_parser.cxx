@@ -6,7 +6,26 @@
 
 namespace fts {
 
-nlohmann::json parse_config(const std::string& conf_filename)
+void to_json(nlohmann::json& j, const fts::ConfOptions& conf)
+{
+    j = nlohmann::json{
+        {"stop_words", conf.stop_words}, {"ngram_min_len", conf.ngram_min_len}, {"ngram_max_len", conf.ngram_max_len}};
+}
+
+void from_json(const nlohmann::json& j, fts::ConfOptions& conf)
+{
+    j.at("stop_words").get_to(conf.stop_words);
+    j.at("ngram_min_len").get_to(conf.ngram_min_len);
+    j.at("ngram_max_len").get_to(conf.ngram_max_len);
+}
+
+void print_config_to_json(std::ofstream& file, const fts::ConfOptions& config)
+{
+    const nlohmann::json j = config;
+    file << std::setw(4) << j << '\n';
+}
+
+fts::ConfOptions parse_config(const std::string& conf_filename)
 {
     std::ifstream conf_file(conf_filename);
 
@@ -19,16 +38,7 @@ nlohmann::json parse_config(const std::string& conf_filename)
 
     conf_file.close();
 
-    return parsed_conf;
-}
-
-fts::ConfOptions parse_json_struct(const nlohmann::json& parsed_conf)
-{
-    fts::ConfOptions config{
-        parsed_conf.at("stop_words"),
-        parsed_conf.at("ngram_min_len"),
-        parsed_conf.at("ngram_max_len"),
-    };
+    fts::ConfOptions config = parsed_conf.get<fts::ConfOptions>();
 
     if (config.ngram_min_len < 1)
     {
@@ -41,19 +51,6 @@ fts::ConfOptions parse_json_struct(const nlohmann::json& parsed_conf)
     }
 
     return config;
-}
-
-void copy_config(const nlohmann::json& parsed_conf, const std::string& index_path)
-{
-    std::ofstream conf_copy_file(index_path + "/Config.json");
-
-    if (!conf_copy_file.is_open())
-    {
-        throw std::runtime_error{"Can't open file in copy_config function"};
-    }
-
-    conf_copy_file << std::setw(4) << parsed_conf << '\n';
-    conf_copy_file.close();
 }
 
 }  // namespace fts

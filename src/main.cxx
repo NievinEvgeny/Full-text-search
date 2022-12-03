@@ -2,7 +2,6 @@
 #include <fts/indexer.hpp>
 #include <fts/searcher.hpp>
 #include <fts/replxx-wrapper.hpp>
-#include <nlohmann/json.hpp>
 #include <cxxopts.hpp>
 #include <iostream>
 #include <stdexcept>
@@ -36,23 +35,20 @@ static void check_index_directories(const std::string& index_path, size_t indexe
 static void build_index(const cxxopts::ParseResult& parse_cmd_line, const std::string& index_path)
 {
     const std::string conf_filename = parse_cmd_line["config_file"].as<std::string>();
-    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
-    const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
-    fts::copy_config(parsed_conf, index_path);
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
 
     fts::IndexBuilder indexes{config};
 
     const std::string csv_filename = parse_cmd_line["csv"].as<std::string>();
     indexes.parse_csv(csv_filename);
 
-    fts::TextIndexWriter index_writer(index_path);
+    fts::TextIndexWriter index_writer(index_path, config);
     index_writer.write(indexes.get_index());
 }
 
 static void search(const cxxopts::ParseResult& parse_cmd_line, const std::string& index_path)
 {
-    const nlohmann::json parsed_conf = fts::parse_config(index_path + "/Config.json");
-    const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
+    const fts::ConfOptions config = fts::parse_config(index_path + "/Config.json");
 
     std::string query;
 

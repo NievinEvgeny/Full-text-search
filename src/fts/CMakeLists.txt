@@ -21,9 +21,10 @@ set_compile_options(${target_name})
 target_link_libraries(
     ${target_name}
     PRIVATE
-    nlohmann_json::nlohmann_json
     rapidcsv
     replxx
+    PUBLIC
+    nlohmann_json::nlohmann_json
 )
 
 target_include_directories(
