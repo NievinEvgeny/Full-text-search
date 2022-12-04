@@ -65,8 +65,7 @@ TEST(add_document, check_rewrited_doc)
 TEST(add_document, check_num_of_entries)
 {
     const std::string conf_filename = "../../../RunOptions.json";
-    const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
-    const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
 
     fts::IndexBuilder indexes{config};
 
