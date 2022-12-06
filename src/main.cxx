@@ -61,12 +61,12 @@ static void search(const cxxopts::ParseResult& parse_cmd_line, const std::string
         query = parse_cmd_line["query"].as<std::string>();
     }
 
-    const std::vector<fts::Ngram> ngrams = fts::parse_query(config, query);
+    fts::TextIndexAccessor index_accessor(index_path, config);
 
-    fts::IndexAccessor index_accessor(index_path, ngrams);
+    fts::Searcher searcher(index_accessor);
 
-    const std::vector<fts::DocScore> doc_scores = index_accessor.get_scores();
-    index_accessor.print_scores();
+    const std::vector<fts::DocScore> doc_scores = searcher.score_calc(query);
+    searcher.print_scores(doc_scores);
 }
 
 int main(int argc, char** argv)

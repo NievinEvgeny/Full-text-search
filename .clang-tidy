@@ -32,4 +32,8 @@ FormatStyle:     file
 CheckOptions:
   - key:   cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors
     value: '1'
+  - key:   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
+    value: 'true'
+  - key:   hicpp-special-member-functions.AllowSoleDefaultDtor
+    value: 'true'
 ...

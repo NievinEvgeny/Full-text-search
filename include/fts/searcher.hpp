@@ -1,58 +1,80 @@
 #pragma once
-#include <fts/query_parser.hpp>
-#include <unordered_map>
-#include <unordered_set>
+#include <fts/conf_parser.hpp>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 namespace fts {
 
 struct DocScore
 {
     int doc_id;
+
     double score;
 };
 
-struct TermAttributes
+struct TermInfo
 {
-    std::unordered_set<int> doc_ids;
+    int doc_id;
 
-    std::unordered_map<int, int> term_frequency;
-
-    int doc_frequency;
+    int term_frequency;
 };
 
 class IndexAccessor
 {
-    std::unordered_map<std::string, fts::TermAttributes> terms;
+   public:
+    virtual const fts::ConfOptions& get_config() const = 0;
+    virtual std::size_t total_docs() const = 0;
+    virtual std::string load_document(int document_id) = 0;
+    virtual std::vector<fts::TermInfo> get_term_infos(const std::string& term) = 0;
+    virtual ~IndexAccessor() = default;
+};
 
-    std::vector<DocScore> doc_scores;
+class TextIndexAccessor : public IndexAccessor
+{
+    const std::string index_path;
 
-    std::vector<int> all_doc_ids;
+    const fts::ConfOptions config;
 
-    void deserialize_index(const std::string& index_path, const std::vector<fts::Ngram>& ngrams);
+    const std::size_t num_of_docs;
 
-    void store_doc_ids(const std::string& index_path);
-
-    void score_calc();
-
-    void score_sort();
+    static std::size_t find_num_of_docs(const std::string& index_dir_name);
 
    public:
-    IndexAccessor(const std::string& index_path, const std::vector<fts::Ngram>& ngrams)
+    TextIndexAccessor(std::string index_dir_name, fts::ConfOptions conf)
+        : index_path(std::move(index_dir_name)),
+          config(std::move(conf)),
+          num_of_docs(fts::TextIndexAccessor::find_num_of_docs(index_path))
     {
-        deserialize_index(index_path, ngrams);
-        store_doc_ids(index_path);
-        score_calc();
-        score_sort();
     }
 
-    const std::vector<DocScore>& get_scores()
+    const fts::ConfOptions& get_config() const override
     {
-        return doc_scores;
+        return config;
     }
 
-    void print_scores();
+    std::size_t total_docs() const override
+    {
+        return num_of_docs;
+    }
+
+    std::string load_document(int document_id) override;
+
+    std::vector<fts::TermInfo> get_term_infos(const std::string& term) override;
+};
+
+class Searcher
+{
+    fts::IndexAccessor& accessor;
+
+   public:
+    explicit Searcher(fts::IndexAccessor& access) : accessor(access)
+    {
+    }
+
+    std::vector<DocScore> score_calc(const std::string& query);
+
+    void print_scores(const std::vector<DocScore>& doc_scores);
 };
 
 }  // namespace fts
