@@ -1,22 +1,20 @@
-#include <fts/parser.hpp>
+#include <fts/conf_parser.hpp>
 #include <fts/indexer.hpp>
 #include <fts/searcher.hpp>
-#include <nlohmann/json.hpp>
+#include <fts/replxx-wrapper.hpp>
 #include <cxxopts.hpp>
 #include <iostream>
 #include <stdexcept>
 #include <filesystem>
 #include <vector>
 
-namespace {
-
-void check_index_directories(const std::string& index_path, size_t indexer, size_t searcher)
+static void check_index_directories(const std::string& index_path, size_t indexer, size_t searcher)
 {
     const std::filesystem::path index(index_path);
     const std::filesystem::path index_docs(index_path + "/docs");
     const std::filesystem::path index_entries(index_path + "/entries");
 
-    const std::vector<std::filesystem::path> directories = {index, index_docs, index_entries};
+    const std::vector<std::filesystem::path> directories{index, index_docs, index_entries};
 
     for (const auto& dir : directories)
     {
@@ -34,7 +32,42 @@ void check_index_directories(const std::string& index_path, size_t indexer, size
     }
 }
 
-}  // namespace
+static void build_index(const cxxopts::ParseResult& parse_cmd_line, const std::string& index_path)
+{
+    const std::string conf_filename = parse_cmd_line["config_file"].as<std::string>();
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
+
+    fts::IndexBuilder indexes{config};
+
+    const std::string csv_filename = parse_cmd_line["csv"].as<std::string>();
+    indexes.parse_csv(csv_filename);
+
+    fts::TextIndexWriter index_writer(index_path, config);
+    index_writer.write(indexes.get_index());
+}
+
+static void search(const cxxopts::ParseResult& parse_cmd_line, const std::string& index_path)
+{
+    const fts::ConfOptions config = fts::parse_config(index_path + "/Config.json");
+
+    std::string query;
+
+    if (!parse_cmd_line.count("query"))
+    {
+        query = replxx::wrapper::getline();
+    }
+    else
+    {
+        query = parse_cmd_line["query"].as<std::string>();
+    }
+
+    fts::TextIndexAccessor index_accessor(index_path, config);
+
+    fts::Searcher searcher(index_accessor);
+
+    const fts::SearchInfo result_of_search = searcher.score_calc(query);
+    searcher.print_scores(result_of_search);
+}
 
 int main(int argc, char** argv)
 {
@@ -45,8 +78,9 @@ int main(int argc, char** argv)
         ("indexer", "Indexer call")
         ("searcher", "Searcher call")
         ("i,index_path", "Path for index", cxxopts::value<std::string>()->default_value("index"))
+        ("c,csv", "Path for *.csv file", cxxopts::value<std::string>()->default_value("books.csv"))
         ("q,query", "Query to search", cxxopts::value<std::string>())
-        ("c,config_file", "Config file name (only for indexer)", cxxopts::value<std::string>()->default_value("RunOptions.json"))
+        ("config,config_file", "Config file name (only for indexer)", cxxopts::value<std::string>()->default_value("RunOptions.json"))
         ("h,help", "Print usage");
     // clang-format on
 
@@ -66,37 +100,12 @@ int main(int argc, char** argv)
 
         if (parse_cmd_line.count("indexer"))
         {
-            const std::string conf_filename = parse_cmd_line["config_file"].as<std::string>();
-            const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
-            const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
-            fts::copy_config(parsed_conf, index_path);
-
-            fts::IndexBuilder indexes;
-            indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution", config);  // delete
-            indexes.add_document(238695, "The Matrix Revolution", config);  // delete
-            indexes.add_document(390473, "The Matrix", config);  // delete
-            indexes.add_document(450473, "Peepo the Clown", config);  // delete
-
-            fts::TextIndexWriter index_writer(index_path);
-            index_writer.write(indexes.get_index());
+            build_index(parse_cmd_line, index_path);
         }
 
         if (parse_cmd_line.count("searcher"))
         {
-            const nlohmann::json parsed_conf = fts::parse_config(index_path + "/Config.json");
-            const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
-
-            const std::string query = parse_cmd_line["query"].as<std::string>();
-            const std::vector<fts::Ngram> ngrams = fts::parse_query(config, query);
-
-            fts::IndexAccessor index_accessor(index_path, ngrams);
-
-            const std::vector<fts::DocScore> doc_scores = index_accessor.get_scores();
-
-            for (const auto& doc_score : doc_scores)
-            {
-                std::cout << doc_score.doc_id << ' ' << doc_score.score << '\n';
-            }
+            search(parse_cmd_line, index_path);
         }
     }
 
