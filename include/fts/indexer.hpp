@@ -29,23 +29,31 @@ class IndexBuilder
 {
     fts::Index index;
 
+    const fts::ConfOptions config;
+
    public:
-    const fts::Index& get_index()
+    explicit IndexBuilder(fts::ConfOptions conf) : config(std::move(conf))
     {
-        return this->index;
     }
 
-    void add_document(int document_id, const std::string& text, const fts::ConfOptions& config);
+    const fts::Index& get_index()
+    {
+        return index;
+    }
 
-    void parse_csv(const std::string& filename, const fts::ConfOptions& config);
+    void add_document(int document_id, const std::string& text);
+
+    void parse_csv(const std::string& filename);
 };
 
 class TextIndexWriter
 {
-    std::string index_dir_path;
+    const std::string index_dir_path;
+
+    const fts::ConfOptions config;
 
    public:
-    explicit TextIndexWriter(std::string path) : index_dir_path(std::move(path))
+    TextIndexWriter(std::string path, fts::ConfOptions conf) : index_dir_path(std::move(path)), config(std::move(conf))
     {
     }
 

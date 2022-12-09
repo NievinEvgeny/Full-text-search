@@ -1,106 +1,125 @@
 #include <fts/searcher.hpp>
 #include <fts/query_parser.hpp>
-#include <string>
+#include <fts/word_hash.hpp>
 #include <filesystem>
-#include <fstream>
-#include <algorithm>
+#include <string>
 #include <cmath>
-#include <array>
+#include <vector>
 #include <iostream>
 
 namespace fts {
 
-void IndexAccessor::deserialize_index(const std::string& index_path, const std::vector<fts::Ngram>& ngrams)
+std::size_t TextIndexAccessor::find_num_of_docs(const std::string& index_dir_name)
 {
-    for (const auto& ngram : ngrams)
+    return std::count_if(
+        std::filesystem::directory_iterator(index_dir_name + "/docs/"),
+        std::filesystem::directory_iterator{},
+        [&](const std::filesystem::directory_entry& path) { return path.is_regular_file(); });
+}
+
+std::string TextIndexAccessor::load_document(int document_id)
+{
+    const std::string string_doc_id = std::to_string(document_id);
+
+    std::ifstream doc(index_path + "/docs/" += string_doc_id);
+
+    if (!doc.is_open())
     {
-        const std::string word_hash = fts::get_word_hash(ngram.word);
+        throw std::runtime_error{"Can't open file in TextIndexAccessor::load_document function"};
+    }
 
-        const std::filesystem::path entrie_doc_path(index_path + "/entries/" += word_hash);
-        std::ifstream entrie_doc(index_path + "/entries/" += word_hash);
+    std::string line_from_doc;
+    std::getline(doc, line_from_doc);
+    doc.close();
 
-        if (!std::filesystem::exists(entrie_doc_path))
+    return line_from_doc;
+}
+
+std::vector<fts::TermInfo> TextIndexAccessor::get_term_infos(const std::string& term)
+{
+    const std::string word_hash = fts::get_word_hash(term);
+
+    const std::size_t min_capacity_term_infos = 5;
+    std::vector<fts::TermInfo> term_infos;
+    term_infos.reserve(min_capacity_term_infos);
+
+    std::ifstream entrie_doc(index_path + "/entries/" += word_hash);
+
+    if (!entrie_doc.is_open())
+    {
+        return term_infos;
+    }
+
+    std::string line_from_entrie;
+
+    while (std::getline(entrie_doc, line_from_entrie))
+    {
+        if (line_from_entrie.find(term) == std::string::npos)
         {
             continue;
         }
-        if (!entrie_doc.is_open())
+
+        const std::vector<std::string> line_tokens = string_tokenize(line_from_entrie);
+
+        for (auto iter = line_tokens.begin() + 2; iter != line_tokens.end(); iter++)
         {
-            throw std::runtime_error{"Can't open file in IndexAccessor::deserialize_index function"};
+            int doc_id = std::stoi(*iter);
+            iter++;
+
+            int term_freq = std::stoi(*iter);
+            iter += term_freq;
+
+            term_infos.push_back({doc_id, term_freq});
         }
 
-        std::string line_from_entrie;
-
-        while (std::getline(entrie_doc, line_from_entrie))
-        {
-            if (line_from_entrie.find(ngram.word) == std::string::npos)
-            {
-                continue;
-            }
-
-            const std::vector<std::string> line_tokens = string_tokenization(line_from_entrie);
-
-            this->terms[ngram.word].doc_frequency = std::stoi(*(line_tokens.begin() + 1));
-
-            for (auto iter = line_tokens.begin() + 2; iter != line_tokens.end(); iter++)
-            {
-                int doc_id = std::stoi(*iter);
-                iter++;
-
-                int term_freq = std::stoi(*iter);
-                iter += term_freq;
-
-                this->terms[ngram.word].doc_ids.insert(doc_id);
-                this->terms[ngram.word].term_frequency[doc_id] = term_freq;
-            }
-
-            break;
-        }
-
-        entrie_doc.close();
+        break;
     }
+    entrie_doc.close();
+    return term_infos;
 }
 
-void IndexAccessor::store_doc_ids(const std::string& index_path)
+static void score_sort(std::vector<fts::DocScore>& doc_scores)
 {
-    for (const auto& doc : std::filesystem::directory_iterator(index_path + "/docs/"))
-    {
-        if (doc.is_regular_file())
-        {
-            this->all_doc_ids.push_back(std::stoi(doc.path().stem().string()));
-        }
-    }
-}
-
-void IndexAccessor::score_calc()
-{
-    for (const auto& doc_id : this->all_doc_ids)
-    {
-        fts::DocScore temp_doc_score = {doc_id, 0};
-
-        for (const auto& [term, attributes] : this->terms)
-        {
-            if (attributes.doc_ids.find(doc_id) != attributes.doc_ids.end())
-            {
-                temp_doc_score.score += std::sqrt(attributes.term_frequency.at(doc_id))
-                    * std::log(static_cast<double>(this->all_doc_ids.size())
-                               / static_cast<double>(attributes.doc_frequency));
-            }
-        }
-
-        this->doc_scores.push_back(temp_doc_score);
-    }
-}
-
-void IndexAccessor::score_sort()
-{
-    std::sort(this->doc_scores.begin(), this->doc_scores.end(), [](const fts::DocScore& a, const fts::DocScore& b) {
+    std::sort(doc_scores.begin(), doc_scores.end(), [](const fts::DocScore& a, const fts::DocScore& b) {
         return (a.score == b.score) ? (a.doc_id < b.doc_id) : (a.score > b.score);
     });
 }
 
-void IndexAccessor::print_scores()
+fts::SearchInfo Searcher::score_calc(const std::string& query)
 {
-    if (this->doc_scores.empty())
+    std::unordered_map<int, double> doc_scores_map;
+
+    const std::vector<fts::Ngram> ngrams = parse_query(accessor.get_config(), query);
+
+    for (const auto& ngram : ngrams)
+    {
+        std::vector<fts::TermInfo> term_infos = accessor.get_term_infos(ngram.word);
+
+        for (const auto& term_info : term_infos)
+        {
+            doc_scores_map[term_info.doc_id] += std::sqrt(term_info.term_frequency)
+                * std::log(static_cast<double>(accessor.total_docs()) / static_cast<double>(term_infos.size()));
+        }
+    }
+
+    std::vector<fts::DocScore> doc_scores;
+    doc_scores.reserve(doc_scores_map.size());
+
+    for (const auto& [doc_id, score] : doc_scores_map)
+    {
+        doc_scores.push_back({doc_id, score});
+    }
+
+    score_sort(doc_scores);
+
+    fts::SearchInfo search_info{doc_scores, ngrams.size()};
+
+    return search_info;
+}
+
+void Searcher::print_scores(const fts::SearchInfo& search_info)
+{
+    if (search_info.docs_scores.empty())
     {
         return;
     }
@@ -111,16 +130,16 @@ void IndexAccessor::print_scores()
     for (const auto& range : ranges)
     {
         const size_t terms_max_num = 20;
-        const size_t terms_num = std::min(this->terms.size(), terms_max_num);
+        const size_t terms_num = std::min(search_info.num_of_terms, terms_max_num);
 
         double min_score
-            = static_cast<double>(terms_num) * ((std::log(static_cast<double>(this->all_doc_ids.size()) / range)));
+            = static_cast<double>(terms_num) * ((std::log(static_cast<double>(accessor.total_docs()) / range)));
 
-        if (this->doc_scores.at(0).score > min_score)
+        if (search_info.docs_scores.at(0).score > min_score)
         {
-            for (size_t i = 0; this->doc_scores.at(i).score > min_score; i++)
+            for (size_t i = 0; search_info.docs_scores.at(i).score > min_score; i++)
             {
-                std::cout << this->doc_scores.at(i).doc_id << ' ' << this->doc_scores.at(i).score << '\n';
+                std::cout << search_info.docs_scores.at(i).doc_id << ' ' << search_info.docs_scores.at(i).score << '\n';
             }
             return;
         }

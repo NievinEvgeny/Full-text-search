@@ -11,6 +11,8 @@ add_library(${target_name} STATIC
     ${PROJECT_SOURCE_DIR}/include/fts/searcher.hpp
     replxx-wrapper.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/replxx-wrapper.hpp
+    word_hash.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/word_hash.hpp
 )
 
 include(CompileOptions)
@@ -19,9 +21,10 @@ set_compile_options(${target_name})
 target_link_libraries(
     ${target_name}
     PRIVATE
-    nlohmann_json::nlohmann_json
     rapidcsv
     replxx
+    PUBLIC
+    nlohmann_json::nlohmann_json
 )
 
 target_include_directories(

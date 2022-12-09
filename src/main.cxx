@@ -2,7 +2,6 @@
 #include <fts/indexer.hpp>
 #include <fts/searcher.hpp>
 #include <fts/replxx-wrapper.hpp>
-#include <nlohmann/json.hpp>
 #include <cxxopts.hpp>
 #include <iostream>
 #include <stdexcept>
@@ -31,6 +30,43 @@ static void check_index_directories(const std::string& index_path, size_t indexe
             }
         }
     }
+}
+
+static void build_index(const cxxopts::ParseResult& parse_cmd_line, const std::string& index_path)
+{
+    const std::string conf_filename = parse_cmd_line["config_file"].as<std::string>();
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
+
+    fts::IndexBuilder indexes{config};
+
+    const std::string csv_filename = parse_cmd_line["csv"].as<std::string>();
+    indexes.parse_csv(csv_filename);
+
+    fts::TextIndexWriter index_writer(index_path, config);
+    index_writer.write(indexes.get_index());
+}
+
+static void search(const cxxopts::ParseResult& parse_cmd_line, const std::string& index_path)
+{
+    const fts::ConfOptions config = fts::parse_config(index_path + "/Config.json");
+
+    std::string query;
+
+    if (!parse_cmd_line.count("query"))
+    {
+        query = replxx::wrapper::getline();
+    }
+    else
+    {
+        query = parse_cmd_line["query"].as<std::string>();
+    }
+
+    fts::TextIndexAccessor index_accessor(index_path, config);
+
+    fts::Searcher searcher(index_accessor);
+
+    const fts::SearchInfo result_of_search = searcher.score_calc(query);
+    searcher.print_scores(result_of_search);
 }
 
 int main(int argc, char** argv)
@@ -64,42 +100,12 @@ int main(int argc, char** argv)
 
         if (parse_cmd_line.count("indexer"))
         {
-            const std::string conf_filename = parse_cmd_line["config_file"].as<std::string>();
-            const nlohmann::json parsed_conf = fts::parse_config(conf_filename);
-            const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
-            fts::copy_config(parsed_conf, index_path);
-
-            fts::IndexBuilder indexes;
-
-            const std::string csv_filename = parse_cmd_line["csv"].as<std::string>();
-            indexes.parse_csv(csv_filename, config);
-
-            fts::TextIndexWriter index_writer(index_path);
-            index_writer.write(indexes.get_index());
+            build_index(parse_cmd_line, index_path);
         }
 
         if (parse_cmd_line.count("searcher"))
         {
-            const nlohmann::json parsed_conf = fts::parse_config(index_path + "/Config.json");
-            const fts::ConfOptions config = fts::parse_json_struct(parsed_conf);
-
-            std::string query;
-
-            if (!parse_cmd_line.count("query"))
-            {
-                query = replxx::wrapper::getline();
-            }
-            else
-            {
-                query = parse_cmd_line["query"].as<std::string>();
-            }
-
-            const std::vector<fts::Ngram> ngrams = fts::parse_query(config, query);
-
-            fts::IndexAccessor index_accessor(index_path, ngrams);
-
-            const std::vector<fts::DocScore> doc_scores = index_accessor.get_scores();
-            index_accessor.print_scores();
+            search(parse_cmd_line, index_path);
         }
     }
 

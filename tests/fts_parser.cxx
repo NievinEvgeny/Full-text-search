@@ -1,118 +1,137 @@
+#include <fts/conf_parser.hpp>
 #include <fts/query_parser.hpp>
 #include <gtest/gtest.h>
 #include <string>
 #include <unordered_set>
 
-TEST(string_tokenization, simple)
+TEST(string_tokenize, simple)
 {
     std::vector<std::string> expect{"dr", "jekyll", "and", "mr", "hyde"};
     std::string text = "dr jekyll and mr hyde";
-    std::vector<std::string> real = fts::string_tokenization(text);
+    std::vector<std::string> real = fts::string_tokenize(text);
     for (int i = 0; i < 5; i++)
     {
         EXPECT_TRUE(expect[i] == real[i]);
     }
 }
 
-TEST(string_tokenization, white_spaces)
+TEST(string_tokenize, white_spaces)
 {
     std::string text = "   ";
-    std::vector<std::string> real = fts::string_tokenization(text);
+    std::vector<std::string> real = fts::string_tokenize(text);
     EXPECT_TRUE(real.empty());
 }
 
-TEST(string_tokenization, empty)
+TEST(string_tokenize, empty)
 {
     std::string text = "";
-    std::vector<std::string> real = fts::string_tokenization(text);
+    std::vector<std::string> real = fts::string_tokenize(text);
     EXPECT_TRUE(real.empty());
 }
 
-TEST(string_tokenization, white_spaces_everywhere)
+TEST(string_tokenize, white_spaces_everywhere)
 {
     std::vector<std::string> expect{5, "a"};
     std::string text = "    a a a  a  a    ";
-    std::vector<std::string> real = fts::string_tokenization(text);
+    std::vector<std::string> real = fts::string_tokenize(text);
     for (int i = 0; i < 5; i++)
     {
         EXPECT_TRUE(expect[i] == real[i]);
     }
 }
 
-TEST(delete_stop_words, simple)
+TEST(parse_query, simple)
 {
-    const std::unordered_set<std::string> stop_words{"dr", "and", "mr"};
-    std::vector<std::string> expect{"jekyll", "hyde"};
-    std::vector<std::string> real{"dr", "jekyll", "and", "mr", "hyde"};
-    fts::delete_stop_words(real, stop_words);
-    for (int i = 0; i < 2; i++)
+    const std::string conf_filename = "../../../RunOptions.json";
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
+
+    std::vector<std::string> expect{"jek", "jeky", "jekyl", "jekyll", "hyd", "hyde"};
+    std::string text = "dr. jekyll and hyde";
+    std::vector<fts::Ngram> real = fts::parse_query(config, text);
+    for (int i = 0; i < 6; i++)
     {
-        EXPECT_TRUE(expect[i] == real[i]);
+        EXPECT_TRUE(expect.at(i) == real.at(i).word);
     }
 }
 
-TEST(delete_stop_words, no_relevant_words)
+TEST(parse_query, only_stop_words)
 {
-    const std::unordered_set<std::string> stop_words{"dr", "and", "mr", "a", "with"};
-    std::vector<std::string> real{"dr", "and", "mr", "a", "with"};
-    fts::delete_stop_words(real, stop_words);
+    const std::string conf_filename = "../../../RunOptions.json";
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
+
+    std::string text = "dr. with  , and, the.";
+    std::vector<fts::Ngram> real = fts::parse_query(config, text);
+
     EXPECT_TRUE(real.empty());
 }
 
-TEST(delete_stop_words, numbers_in_stop_words)
+TEST(parse_query, words_len_below_min)
 {
-    const std::unordered_set<std::string> stop_words{"dr", "and", "mr", "a12", "with"};
-    std::vector<std::string> expect;
-    std::vector<std::string> real{"dr", "and", "mr", "a12", "with"};
-    fts::delete_stop_words(real, stop_words);
-    EXPECT_TRUE(expect.size() == real.size());
+    const std::string conf_filename = "../../../RunOptions.json";
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
+
+    std::string text = "dr je a1 hy";
+    std::vector<fts::Ngram> real = fts::parse_query(config, text);
+
+    EXPECT_TRUE(real.empty());
 }
 
-TEST(ngram_generation, simple)
+TEST(parse_query, numbers_in_words)
 {
-    int ngram_min_length = 3, ngram_max_length = 6;
-    std::vector<std::string> text_tokens{"jekyll", "hyde"};
+    const std::string conf_filename = "../../../RunOptions.json";
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    std::vector<fts::Ngram> expect = {{0, "jek"}, {0, "jeky"}, {0, "jekyl"}, {0, "jekyll"}, {1, "hyd"}, {1, "hyde"}};
-    std::vector<fts::Ngram> real;
-
-    real = fts::ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
-    for (int i = 0; i < 6; i++)
+    std::vector<std::string> expect{"a12", "hyd", "hyde"};
+    std::string text = "dr. a12 and hyde";
+    std::vector<fts::Ngram> real = fts::parse_query(config, text);
+    for (int i = 0; i < 3; i++)
     {
-        EXPECT_TRUE(expect[i].index == real[i].index);
-        EXPECT_TRUE(expect[i].word == real[i].word);
+        EXPECT_TRUE(expect.at(i) == real.at(i).word);
     }
 }
 
-TEST(ngram_generation, non_relevant_words)
+TEST(parse_query, long_words)
 {
-    int ngram_min_length = 3, ngram_max_length = 6;
-    std::vector<std::string> text_tokens;
-    text_tokens.push_back("je");
-    text_tokens.push_back("hy");
+    const std::string conf_filename = "../../../RunOptions.json";
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    std::vector<fts::Ngram> expect;
-    std::vector<fts::Ngram> real;
-
-    real = fts::ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
-
-    EXPECT_TRUE(expect.size() == real.size());
+    std::vector<std::string> expect{"pep", "pepe", "pepeg", "pepegu", "che", "cheb", "chebu", "chebur"};
+    std::string text = "pepegus and cheburashka";
+    std::vector<fts::Ngram> real = fts::parse_query(config, text);
+    for (int i = 0; i < 8; i++)
+    {
+        EXPECT_TRUE(expect.at(i) == real.at(i).word);
+    }
 }
 
-TEST(ngram_generation, big_and_small_words)
+TEST(parse_query, check_term_pos)
 {
-    int ngram_min_length = 3, ngram_max_length = 6;
-    std::vector<std::string> text_tokens;
-    text_tokens.push_back("peepoclown");
-    text_tokens.push_back("hy");
+    const std::string conf_filename = "../../../RunOptions.json";
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
 
+    std::string text = "dr. jekyll and hyde";
+    std::vector<fts::Ngram> expect = {{0, "jek"}, {0, "jeky"}, {0, "jekyl"}, {0, "jekyll"}, {1, "hyd"}, {1, "hyde"}};
+    std::vector<fts::Ngram> real = fts::parse_query(config, text);
+
+    for (int i = 0; i < 6; i++)
+    {
+        EXPECT_TRUE(expect.at(i).index == real.at(i).index);
+        EXPECT_TRUE(expect.at(i).word == real.at(i).word);
+    }
+}
+
+TEST(parse_query, big_and_small_words)
+{
+    const std::string conf_filename = "../../../RunOptions.json";
+    const fts::ConfOptions config = fts::parse_config(conf_filename);
+
+    std::string text = "peepoclown hy";
     std::vector<fts::Ngram> expect = {{0, "pee"}, {0, "peep"}, {0, "peepo"}, {0, "peepoc"}};
-    std::vector<fts::Ngram> real;
+    std::vector<fts::Ngram> real = fts::parse_query(config, text);
 
-    real = fts::ngram_generation(text_tokens, ngram_min_length, ngram_max_length);
     for (int i = 0; i < 4; i++)
     {
-        EXPECT_TRUE(expect[i].index == real[i].index);
-        EXPECT_TRUE(expect[i].word == real[i].word);
+        EXPECT_TRUE(expect.at(i).index == real.at(i).index);
+        EXPECT_TRUE(expect.at(i).word == real.at(i).word);
     }
 }
