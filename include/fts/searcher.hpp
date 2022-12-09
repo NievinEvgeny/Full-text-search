@@ -13,6 +13,13 @@ struct DocScore
     double score;
 };
 
+struct SearchInfo
+{
+    std::vector<fts::DocScore> docs_scores;
+
+    std::size_t num_of_terms;
+};
+
 struct TermInfo
 {
     int doc_id;
@@ -72,9 +79,9 @@ class Searcher
     {
     }
 
-    std::vector<DocScore> score_calc(const std::string& query);
+    fts::SearchInfo score_calc(const std::string& query);
 
-    void print_scores(const std::vector<DocScore>& doc_scores);
+    void print_scores(const fts::SearchInfo& search_info);
 };
 
 }  // namespace fts

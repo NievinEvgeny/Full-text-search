@@ -85,7 +85,7 @@ static void score_sort(std::vector<fts::DocScore>& doc_scores)
     });
 }
 
-std::vector<DocScore> Searcher::score_calc(const std::string& query)
+fts::SearchInfo Searcher::score_calc(const std::string& query)
 {
     std::unordered_map<int, double> doc_scores_map;
 
@@ -102,7 +102,7 @@ std::vector<DocScore> Searcher::score_calc(const std::string& query)
         }
     }
 
-    std::vector<DocScore> doc_scores;
+    std::vector<fts::DocScore> doc_scores;
     doc_scores.reserve(doc_scores_map.size());
 
     for (const auto& [doc_id, score] : doc_scores_map)
@@ -112,12 +112,14 @@ std::vector<DocScore> Searcher::score_calc(const std::string& query)
 
     score_sort(doc_scores);
 
-    return doc_scores;
+    fts::SearchInfo search_info{doc_scores, ngrams.size()};
+
+    return search_info;
 }
 
-void Searcher::print_scores(const std::vector<DocScore>& doc_scores)
+void Searcher::print_scores(const fts::SearchInfo& search_info)
 {
-    if (doc_scores.empty())
+    if (search_info.docs_scores.empty())
     {
         return;
     }
@@ -127,18 +129,17 @@ void Searcher::print_scores(const std::vector<DocScore>& doc_scores)
 
     for (const auto& range : ranges)
     {
-        // const size_t terms_max_num = 20;
-        //  const size_t terms_num = std::min(terms.size(), terms_max_num);
-        const size_t terms_num = 10;  // TODO (get num of terms)
+        const size_t terms_max_num = 20;
+        const size_t terms_num = std::min(search_info.num_of_terms, terms_max_num);
 
         double min_score
             = static_cast<double>(terms_num) * ((std::log(static_cast<double>(accessor.total_docs()) / range)));
 
-        if (doc_scores.at(0).score > min_score)
+        if (search_info.docs_scores.at(0).score > min_score)
         {
-            for (size_t i = 0; doc_scores.at(i).score > min_score; i++)
+            for (size_t i = 0; search_info.docs_scores.at(i).score > min_score; i++)
             {
-                std::cout << doc_scores.at(i).doc_id << ' ' << doc_scores.at(i).score << '\n';
+                std::cout << search_info.docs_scores.at(i).doc_id << ' ' << search_info.docs_scores.at(i).score << '\n';
             }
             return;
         }

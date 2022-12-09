@@ -65,8 +65,8 @@ static void search(const cxxopts::ParseResult& parse_cmd_line, const std::string
 
     fts::Searcher searcher(index_accessor);
 
-    const std::vector<fts::DocScore> doc_scores = searcher.score_calc(query);
-    searcher.print_scores(doc_scores);
+    const fts::SearchInfo result_of_search = searcher.score_calc(query);
+    searcher.print_scores(result_of_search);
 }
 
 int main(int argc, char** argv)
