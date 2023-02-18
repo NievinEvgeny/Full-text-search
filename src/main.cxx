@@ -1,4 +1,5 @@
 #include <fts/conf_parser.hpp>
+#include <fts/index_accessor.hpp>
 #include <fts/indexer.hpp>
 #include <fts/searcher.hpp>
 #include <fts/replxx-wrapper.hpp>
