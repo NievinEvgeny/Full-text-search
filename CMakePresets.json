@@ -34,6 +34,14 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
+        },
+        {
+            "name": "fts-c",
+            "inherits": "base",
+            "binaryDir": "${sourceDir}/build/fts-c",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
         }
     ],
     "buildPresets": [
@@ -54,6 +62,12 @@
             "configurePreset": "test",
             "jobs": 4,
             "targets": "tests"
+        },
+        {
+            "name": "fts-c",
+            "configurePreset": "fts-c",
+            "jobs": 4,
+            "targets": "testapp"
         }
     ],
     "testPresets": [

@@ -19,3 +19,5 @@ target_link_libraries(
 )
 
 add_subdirectory(fts)
+add_subdirectory(fts-c)
+add_subdirectory(testapp)

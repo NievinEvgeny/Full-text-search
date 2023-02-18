@@ -24,7 +24,8 @@ Checks: |
   -bugprone-easily-swappable-parameters,
   -hicpp-exception-baseclass,
   -readability-identifier-length,
-  -llvm-include-order
+  -llvm-include-order,
+  -cppcoreguidelines-pro-type-reinterpret-cast
 WarningsAsErrors: true
 HeaderFilterRegex: 'fts/'
 AnalyzeTemporaryDtors: false
