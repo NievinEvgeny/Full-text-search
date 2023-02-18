@@ -37,7 +37,7 @@ static void build_index(const cxxopts::ParseResult& parse_cmd_line, const std::s
     const std::string conf_filename = parse_cmd_line["config_file"].as<std::string>();
     const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    fts::IndexBuilder indexes{config};
+    fts::IndexBuilder indexes(config);
 
     const std::string csv_filename = parse_cmd_line["csv"].as<std::string>();
     indexes.parse_csv(csv_filename);

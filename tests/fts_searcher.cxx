@@ -13,7 +13,7 @@ TEST(IndexAccessor, score_check_and_stability)
     const std::string conf_filename = "../../../RunOptions.json";
     const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    fts::IndexBuilder indexes{config};
+    fts::IndexBuilder indexes(config);
 
     indexes.add_document(1, "The Matrix");
     indexes.add_document(2, "The Matrix");
