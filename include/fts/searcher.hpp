@@ -28,6 +28,11 @@ class Searcher
     {
     }
 
+    void set_accessor(fts::IndexAccessor& new_access)
+    {
+        accessor = new_access;
+    }
+
     fts::SearchInfo score_calc(const std::string& query);
 
     void print_scores(const fts::SearchInfo& search_info);
