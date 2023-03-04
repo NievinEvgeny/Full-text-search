@@ -4,6 +4,10 @@ add_library(${target_name} SHARED
     index_accessor.cxx
     ${PROJECT_SOURCE_DIR}/include/fts-c/index_accessor.h
     ${PROJECT_SOURCE_DIR}/include/fts-c/term_info.h
+    searcher.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts-c/doc_score.h
+    ${PROJECT_SOURCE_DIR}/include/fts-c/search_info.h
+    ${PROJECT_SOURCE_DIR}/include/fts-c/searcher.h
 )
 
 include(CompileOptions)

@@ -30,11 +30,9 @@ TermInfo* index_accessor_get_term_infos(IndexAccessor* self, const char* term)
 
     auto* conv_term_infos = new TermInfo[term_infos.size()];
 
-    int i = 0;  // refactor??
-    for (auto& [doc_id, term_freq] : term_infos)
+    for (size_t i = 0; i < term_infos.size(); i++)
     {
-        conv_term_infos[i] = {doc_id, term_freq};
-        i++;
+        conv_term_infos[i] = {term_infos.at(i).doc_id, term_infos.at(i).term_frequency};
     }
 
     return conv_term_infos;
