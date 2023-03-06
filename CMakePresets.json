@@ -36,7 +36,15 @@
             }
         },
         {
-            "name": "fts-c",
+            "name": "testapp-c",
+            "inherits": "base",
+            "binaryDir": "${sourceDir}/build/testapp-c",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "py-client",
             "inherits": "base",
             "binaryDir": "${sourceDir}/build/fts-c",
             "cacheVariables": {
@@ -64,10 +72,16 @@
             "targets": "tests"
         },
         {
-            "name": "fts-c",
-            "configurePreset": "fts-c",
+            "name": "testapp-c",
+            "configurePreset": "testapp-c",
             "jobs": 4,
             "targets": "testapp"
+        },
+        {
+            "name": "py-client",
+            "configurePreset": "py-client",
+            "jobs": 4,
+            "targets": "fts-c"
         }
     ],
     "testPresets": [
