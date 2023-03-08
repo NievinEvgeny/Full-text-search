@@ -6,6 +6,8 @@ add_library(${target_name} STATIC
     query_parser.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/query_parser.hpp
     indexer.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/index_accessor.hpp
+    index_accessor.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/indexer.hpp
     searcher.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/searcher.hpp

@@ -1,4 +1,4 @@
-set(target_name TextSearcher)
+set(target_name testapp)
 
 add_executable(${target_name})
 
@@ -8,16 +8,17 @@ set_compile_options(${target_name})
 target_sources(
     ${target_name}
     PRIVATE
-    main.cxx
+    main.c
 )
 
 target_link_libraries(
     ${target_name}
     PRIVATE
-    fts
-    cxxopts
+    fts-c
 )
 
-add_subdirectory(fts)
-add_subdirectory(fts-c)
-add_subdirectory(testapp)
+target_include_directories(
+    ${target_name}
+    PUBLIC
+    ${PROJECT_SOURCE_DIR}/include/
+)

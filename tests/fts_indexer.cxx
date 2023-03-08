@@ -9,7 +9,7 @@ TEST(add_document, num_of_added_docs)
     const std::string conf_filename = "../../../RunOptions.json";
     const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    fts::IndexBuilder indexes{config};
+    fts::IndexBuilder indexes(config);
 
     indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution");
     indexes.add_document(238695, "The Matrix Revolution");
@@ -23,7 +23,7 @@ TEST(add_document, text_in_index_docs)
     const std::string conf_filename = "../../../RunOptions.json";
     const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    fts::IndexBuilder indexes{config};
+    fts::IndexBuilder indexes(config);
 
     indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution");
     indexes.add_document(238695, "The Matrix Revolution");
@@ -37,7 +37,7 @@ TEST(add_document, non_exist_doc_id)
     const std::string conf_filename = "../../../RunOptions.json";
     const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    fts::IndexBuilder indexes{config};
+    fts::IndexBuilder indexes(config);
 
     indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution");
     indexes.add_document(238695, "The Matrix Revolution");
@@ -51,7 +51,7 @@ TEST(add_document, check_rewrited_doc)
     const std::string conf_filename = "../../../RunOptions.json";
     const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    fts::IndexBuilder indexes{config};
+    fts::IndexBuilder indexes(config);
 
     indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution");
     indexes.add_document(103975, "The pepega");
@@ -67,7 +67,7 @@ TEST(add_document, check_num_of_entries)
     const std::string conf_filename = "../../../RunOptions.json";
     const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    fts::IndexBuilder indexes{config};
+    fts::IndexBuilder indexes(config);
 
     indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution");
     indexes.add_document(238695, "The Matrix Revolution");
@@ -81,7 +81,7 @@ TEST(add_document, check_num_of_docs_with_term)
     const std::string conf_filename = "../../../RunOptions.json";
     const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    fts::IndexBuilder indexes{config};
+    fts::IndexBuilder indexes(config);
 
     indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution");
     indexes.add_document(238695, "The Matrix Revolution");
@@ -98,7 +98,7 @@ TEST(add_document, num_of_docs_with_term_is_zero)
     const std::string conf_filename = "../../../RunOptions.json";
     const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    fts::IndexBuilder indexes{config};
+    fts::IndexBuilder indexes(config);
 
     indexes.add_document(103975, "The Matrix Matrix Matrix Reloaded Revolution");
     indexes.add_document(238695, "The Matrix Revolution");
@@ -115,7 +115,7 @@ TEST(add_document, check_term_positions_in_doc)
     const std::string conf_filename = "../../../RunOptions.json";
     const fts::ConfOptions config = fts::parse_config(conf_filename);
 
-    fts::IndexBuilder indexes{config};
+    fts::IndexBuilder indexes(config);
 
     indexes.add_document(103975, "The Matrix Matrix Reloaded Revolution Matrix");
     indexes.add_document(238695, "The Matrix Revolution");
