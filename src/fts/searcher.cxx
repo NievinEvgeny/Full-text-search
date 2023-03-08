@@ -66,7 +66,9 @@ void Searcher::print_scores(const fts::SearchInfo& search_info)
 
         if (search_info.docs_scores.at(0).score > min_score)
         {
-            for (size_t i = 0; search_info.docs_scores.at(i).score > min_score; i++)
+            for (size_t i = 0;
+                 search_info.docs_scores.at(i).score > min_score && i < search_info.docs_scores.size() - 1;
+                 i++)
             {
                 std::cout << search_info.docs_scores.at(i).doc_id << ' ' << search_info.docs_scores.at(i).score << '\n';
             }
