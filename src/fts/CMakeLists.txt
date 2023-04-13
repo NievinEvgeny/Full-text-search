@@ -5,14 +5,16 @@ add_library(${target_name} STATIC
     ${PROJECT_SOURCE_DIR}/include/fts/conf_parser.hpp
     query_parser.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/query_parser.hpp
-    indexer.cxx
-    ${PROJECT_SOURCE_DIR}/include/fts/index_accessor.hpp
     index_accessor.cxx
-    ${PROJECT_SOURCE_DIR}/include/fts/indexer.hpp
+    ${PROJECT_SOURCE_DIR}/include/fts/index_accessor.hpp
+    index_builder.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/index_builder.hpp
+    index_writer.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/index_writer.hpp
     searcher.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/searcher.hpp
-    replxx-wrapper.cxx
-    ${PROJECT_SOURCE_DIR}/include/fts/replxx-wrapper.hpp
+    replxx_wrapper.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/replxx_wrapper.hpp
     word_hash.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/word_hash.hpp
 )

@@ -1,4 +1,4 @@
-#include <fts/replxx-wrapper.hpp>
+#include <fts/replxx_wrapper.hpp>
 #include <replxx.hxx>
 #include <string>
 
