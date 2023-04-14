@@ -39,7 +39,7 @@ TEST(IndexAccessor, score_check_and_stability)
 
     const std::string query = "Matrix";
 
-    fts::TextIndexAccessor index_accessor(temp_dir, config);
+    fts::TextIndexAccessor index_accessor(temp_dir);
     fts::Searcher searcher(index_accessor);
     const fts::SearchInfo search_result = searcher.score_calc(query);
 

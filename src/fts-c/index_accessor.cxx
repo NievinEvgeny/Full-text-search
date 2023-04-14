@@ -47,6 +47,5 @@ void index_accessor_delete(IndexAccessor* self)
 IndexAccessor* text_index_accessor_new(const char* index_dir_name)
 {
     std::string index_dir = index_dir_name;
-    return reinterpret_cast<IndexAccessor*>(static_cast<fts::IndexAccessor*>(
-        new fts::TextIndexAccessor(index_dir, fts::parse_config(index_dir + "/Config.json"))));
+    return reinterpret_cast<IndexAccessor*>(static_cast<fts::IndexAccessor*>(new fts::TextIndexAccessor(index_dir)));
 }
