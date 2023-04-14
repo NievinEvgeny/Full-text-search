@@ -1,4 +1,4 @@
-#include <fts/index_writer.hpp>
+#include <fts/text_index_writer.hpp>
 #include <fts/index_builder.hpp>
 #include <fts/conf_parser.hpp>
 #include <fts/word_hash.hpp>
@@ -7,21 +7,7 @@
 
 namespace fts {
 
-static void config_serialize(const std::string& index_dir_path, const fts::ConfOptions& config)
-{
-    std::ofstream conf_copy_file(index_dir_path + "/Config.json");
-
-    if (!conf_copy_file.is_open())
-    {
-        throw std::runtime_error{"Can't open file in serialize_config function"};
-    }
-
-    fts::print_config_to_json(conf_copy_file, config);
-
-    conf_copy_file.close();
-}
-
-static void docs_serialize(const std::string& index_dir_path, const fts::Index& index)
+static void docs_serialize_text(const std::string& index_dir_path, const fts::Index& index)
 {
     for (const auto& [doc_id, text] : index.docs)
     {
@@ -38,7 +24,7 @@ static void docs_serialize(const std::string& index_dir_path, const fts::Index& 
     }
 }
 
-static void entries_serialize(const std::string& index_dir_path, const fts::Index& index)
+static void entries_serialize_text(const std::string& index_dir_path, const fts::Index& index)
 {
     for (const auto& [term_hash, terms] : index.entries)
     {
@@ -71,8 +57,8 @@ static void entries_serialize(const std::string& index_dir_path, const fts::Inde
 void TextIndexWriter::write(const fts::Index& index) const
 {
     fts::config_serialize(index_dir_path, config);
-    fts::docs_serialize(index_dir_path, index);
-    fts::entries_serialize(index_dir_path, index);
+    fts::docs_serialize_text(index_dir_path, index);
+    fts::entries_serialize_text(index_dir_path, index);
 }
 
 }  // namespace fts

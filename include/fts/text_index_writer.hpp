@@ -1,18 +1,12 @@
 #pragma once
 #include <fts/conf_parser.hpp>
 #include <fts/index_builder.hpp>
+#include <fts/interface_index_writer.hpp>
 #include <string>
 
 namespace fts {
 
-class IndexWriter
-{
-   public:
-    virtual void write(const fts::Index& index) const = 0;
-    virtual ~IndexWriter() = default;
-};
-
-class TextIndexWriter : public IndexWriter
+class TextIndexWriter : public IndexWriter_I
 {
     const std::string index_dir_path;
 

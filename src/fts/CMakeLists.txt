@@ -9,8 +9,9 @@ add_library(${target_name} STATIC
     ${PROJECT_SOURCE_DIR}/include/fts/index_accessor.hpp
     index_builder.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/index_builder.hpp
-    index_writer.cxx
-    ${PROJECT_SOURCE_DIR}/include/fts/index_writer.hpp
+    ${PROJECT_SOURCE_DIR}/include/fts/interface_index_writer.hpp
+    text_index_writer.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/text_index_writer.hpp
     searcher.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/searcher.hpp
     replxx_wrapper.cxx

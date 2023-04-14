@@ -53,4 +53,18 @@ fts::ConfOptions parse_config(const std::string& conf_filename)
     return config;
 }
 
+void config_serialize(const std::string& index_dir_path, const fts::ConfOptions& config)
+{
+    std::ofstream conf_copy_file(index_dir_path + "/Config.json");
+
+    if (!conf_copy_file.is_open())
+    {
+        throw std::runtime_error{"Can't open file in serialize_config function"};
+    }
+
+    fts::print_config_to_json(conf_copy_file, config);
+
+    conf_copy_file.close();
+}
+
 }  // namespace fts
