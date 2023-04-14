@@ -24,18 +24,18 @@ class IndexAccessor
 
 class TextIndexAccessor : public IndexAccessor
 {
-    const std::string index_path;
-
     const fts::ConfOptions config;
+
+    const std::string index_path;
 
     const std::size_t num_of_docs;
 
     static std::size_t find_num_of_docs(const std::string& index_dir_name);
 
    public:
-    TextIndexAccessor(std::string index_dir_name, fts::ConfOptions conf)
-        : index_path(std::move(index_dir_name)),
-          config(std::move(conf)),
+    explicit TextIndexAccessor(std::string index_dir_name)
+        : config(fts::parse_config(index_dir_name + "/Config.json")),
+          index_path(std::move(index_dir_name)),
           num_of_docs(fts::TextIndexAccessor::find_num_of_docs(index_path))
     {
     }

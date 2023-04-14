@@ -50,8 +50,6 @@ static void build_index(const cxxopts::ParseResult& parse_cmd_line, const std::s
 
 static void search(const cxxopts::ParseResult& parse_cmd_line, const std::string& index_path)
 {
-    const fts::ConfOptions config = fts::parse_config(index_path + "/Config.json");
-
     std::string query;
 
     if (!parse_cmd_line.count("query"))
@@ -63,7 +61,7 @@ static void search(const cxxopts::ParseResult& parse_cmd_line, const std::string
         query = parse_cmd_line["query"].as<std::string>();
     }
 
-    fts::TextIndexAccessor index_accessor(index_path, config);
+    fts::TextIndexAccessor index_accessor(index_path);
 
     fts::Searcher searcher(index_accessor);
 
