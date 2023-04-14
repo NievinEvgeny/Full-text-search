@@ -5,7 +5,14 @@
 
 namespace fts {
 
-class TextIndexWriter
+class IndexWriter
+{
+   public:
+    virtual void write(const fts::Index& index) const = 0;
+    virtual ~IndexWriter() = default;
+};
+
+class TextIndexWriter : public IndexWriter
 {
     const std::string index_dir_path;
 
@@ -16,7 +23,7 @@ class TextIndexWriter
     {
     }
 
-    void write(const fts::Index& index);
+    void write(const fts::Index& index) const override;
 };
 
 }  // namespace fts

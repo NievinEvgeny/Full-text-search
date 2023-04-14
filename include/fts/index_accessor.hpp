@@ -17,8 +17,8 @@ class IndexAccessor
    public:
     virtual const fts::ConfOptions& get_config() const = 0;
     virtual std::size_t total_docs() const = 0;
-    virtual std::string load_document(int document_id) = 0;
-    virtual std::vector<fts::TermInfo> get_term_infos(const std::string& term) = 0;
+    virtual std::string load_document(int document_id) const = 0;
+    virtual std::vector<fts::TermInfo> get_term_infos(const std::string& term) const = 0;
     virtual ~IndexAccessor() = default;
 };
 
@@ -50,9 +50,9 @@ class TextIndexAccessor : public IndexAccessor
         return num_of_docs;
     }
 
-    std::string load_document(int document_id) override;
+    std::string load_document(int document_id) const override;
 
-    std::vector<fts::TermInfo> get_term_infos(const std::string& term) override;
+    std::vector<fts::TermInfo> get_term_infos(const std::string& term) const override;
 };
 
 }  // namespace fts

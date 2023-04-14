@@ -16,7 +16,7 @@ std::size_t TextIndexAccessor::find_num_of_docs(const std::string& index_dir_nam
         [&](const std::filesystem::directory_entry& path) { return path.is_regular_file(); });
 }
 
-std::string TextIndexAccessor::load_document(int document_id)
+std::string TextIndexAccessor::load_document(int document_id) const
 {
     const std::string string_doc_id = std::to_string(document_id);
 
@@ -34,7 +34,7 @@ std::string TextIndexAccessor::load_document(int document_id)
     return line_from_doc;
 }
 
-std::vector<fts::TermInfo> TextIndexAccessor::get_term_infos(const std::string& term)
+std::vector<fts::TermInfo> TextIndexAccessor::get_term_infos(const std::string& term) const
 {
     const std::string word_hash = fts::get_word_hash(term);
 

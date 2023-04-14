@@ -68,7 +68,7 @@ static void entries_serialize(const std::string& index_dir_path, const fts::Inde
     }
 }
 
-void TextIndexWriter::write(const fts::Index& index)
+void TextIndexWriter::write(const fts::Index& index) const
 {
     fts::config_serialize(index_dir_path, config);
     fts::docs_serialize(index_dir_path, index);
