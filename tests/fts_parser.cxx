@@ -1,4 +1,4 @@
-#include <fts/conf_parser.hpp>
+#include <fts/config.hpp>
 #include <fts/query_parser.hpp>
 #include <gtest/gtest.h>
 #include <string>

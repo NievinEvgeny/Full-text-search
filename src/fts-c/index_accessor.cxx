@@ -1,7 +1,7 @@
 #include <fts-c/index_accessor.h>
 #include <fts-c/term_info.h>
 #include <fts/index_accessor.hpp>
-#include <fts/conf_parser.hpp>
+#include <fts/config.hpp>
 #include <string>
 #include <vector>
 #include <cstdio>

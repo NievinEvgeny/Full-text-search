@@ -1,6 +1,6 @@
 #include <fts/text_index_writer.hpp>
 #include <fts/index_builder.hpp>
-#include <fts/conf_parser.hpp>
+#include <fts/config.hpp>
 #include <fts/word_hash.hpp>
 #include <string>
 #include <fstream>

@@ -1,8 +1,8 @@
 #include <fts/searcher.hpp>
-#include <fts/conf_parser.hpp>
+#include <fts/config.hpp>
 #include <fts/query_parser.hpp>
 #include <fts/index_builder.hpp>
-#include <fts/index_writer.hpp>
+#include <fts/text_index_writer.hpp>
 #include <gtest/gtest.h>
 #include <filesystem>
 #include <cmath>

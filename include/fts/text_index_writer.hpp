@@ -1,5 +1,5 @@
 #pragma once
-#include <fts/conf_parser.hpp>
+#include <fts/config.hpp>
 #include <fts/index_builder.hpp>
 #include <fts/interface_index_writer.hpp>
 #include <string>

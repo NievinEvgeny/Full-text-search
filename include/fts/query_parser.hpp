@@ -1,5 +1,5 @@
 #pragma once
-#include <fts/conf_parser.hpp>
+#include <fts/config.hpp>
 #include <vector>
 #include <string>
 

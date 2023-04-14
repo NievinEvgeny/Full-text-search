@@ -1,4 +1,4 @@
-#include <fts/conf_parser.hpp>
+#include <fts/config.hpp>
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <stdexcept>
