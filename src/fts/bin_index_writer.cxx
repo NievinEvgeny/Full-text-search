@@ -25,10 +25,12 @@ static void serialize_data(const fts::BinaryBuffer& data, const std::string& tem
 
 void BinIndexWriter::write(const fts::Index& index) const
 {
+    constexpr short hash_len = 6;
+
     fts::config_serialize(index_dir_path, config);
 
-    fts::BinaryBuffer docs_data;
-    fts::BinaryBuffer entries_data;
+    fts::BinaryBuffer docs_data{sizeof(uint32_t) * index.docs.size()};
+    fts::BinaryBuffer entries_data{hash_len * index.entries.size()};
 
     std::unordered_map<uint32_t, uint32_t> id_to_offset;
 

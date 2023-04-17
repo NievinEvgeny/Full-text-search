@@ -11,7 +11,12 @@ class BinaryBuffer
     std::vector<char> data;
 
    public:
-    // reserve??
+    BinaryBuffer() = default;
+
+    explicit BinaryBuffer(std::size_t min_size)
+    {
+        data.reserve(min_size);
+    }
 
     const std::vector<char>& get_data() const
     {
