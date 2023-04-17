@@ -18,17 +18,33 @@ class BinaryBuffer
         return data;
     }
 
-    void write(uint32_t new_data);
+    void write(const std::string& new_data)
+    {
+        std::move(new_data.begin(), new_data.end(), std::back_inserter(data));
+    }
 
-    void write(uint8_t new_data);
+    template <class T>
+    void write(T&& new_data)
+    {
+        std::move(
+            reinterpret_cast<char*>(&new_data),
+            reinterpret_cast<char*>(&new_data) + sizeof(new_data),
+            std::back_inserter(data));
+    }
 
-    void write(const std::string& new_data);
+    void write_to(const std::string& new_data, long offset)
+    {
+        data.insert(data.begin() + offset, new_data.begin(), new_data.end());
+    }
 
-    void write_to(uint32_t new_data, long offset);
-
-    void write_to(uint8_t new_data, long offset);
-
-    void write_to(const std::string& new_data, long offset);
+    template <class T>
+    void write_to(T&& new_data, long offset)
+    {
+        data.insert(
+            data.begin() + offset,
+            reinterpret_cast<char*>(&new_data),
+            reinterpret_cast<char*>(&new_data) + sizeof(new_data));
+    }
 };
 
 }  // namespace fts
