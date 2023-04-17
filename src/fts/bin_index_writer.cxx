@@ -32,16 +32,13 @@ void BinIndexWriter::write(const fts::Index& index) const
 
     std::unordered_map<uint32_t, uint32_t> id_to_offset;
 
-    uint32_t titles_count = index.docs.size();
-    docs_data.write(titles_count);
+    docs_data.write(static_cast<uint32_t>(index.docs.size()));
 
     for (const auto& [id, title] : index.docs)
     {
         id_to_offset[id] = docs_data.get_data().size();
 
-        uint8_t title_size = title.size() + 1;
-
-        docs_data.write(title_size);
+        docs_data.write(static_cast<uint8_t>(title.size() + 1));
         docs_data.write(title);
     }
 
@@ -49,20 +46,16 @@ void BinIndexWriter::write(const fts::Index& index) const
     {
         for (const auto& [term, docs] : terms)
         {
-            uint32_t doc_count = docs.size();
-            entries_data.write(doc_count);
+            entries_data.write(static_cast<uint32_t>(docs.size()));
 
             for (const auto& [doc_id, term_positions] : docs)
             {
                 entries_data.write(id_to_offset.at(doc_id));
-
-                uint32_t pos_count = term_positions.size();
-                entries_data.write(pos_count);
+                entries_data.write(static_cast<uint32_t>(term_positions.size()));
 
                 for (const auto& term_position : term_positions)
                 {
-                    uint32_t pos = term_position;
-                    entries_data.write(pos);
+                    entries_data.write(static_cast<uint32_t>(term_position));
                 }
             }
         }
