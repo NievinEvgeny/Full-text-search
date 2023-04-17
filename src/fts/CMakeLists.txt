@@ -12,6 +12,10 @@ add_library(${target_name} STATIC
     ${PROJECT_SOURCE_DIR}/include/fts/interface_index_writer.hpp
     text_index_writer.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/text_index_writer.hpp
+    bin_index_writer.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/bin_index_writer.hpp
+    binary_buffer.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/binary_buffer.hpp
     searcher.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/searcher.hpp
     replxx_wrapper.cxx

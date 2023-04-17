@@ -2,6 +2,7 @@
 #include <fts/index_accessor.hpp>
 #include <fts/index_builder.hpp>
 #include <fts/text_index_writer.hpp>
+#include <fts/bin_index_writer.hpp>
 #include <fts/searcher.hpp>
 #include <fts/replxx_wrapper.hpp>
 #include <cxxopts.hpp>
@@ -54,8 +55,17 @@ static void build_index(const cxxopts::ParseResult& parse_cmd_line)
     const std::string csv_filename = parse_cmd_line["csv"].as<std::string>();
     indexes.parse_csv(csv_filename);
 
-    fts::TextIndexWriter index_writer(index_path, config);
-    index_writer.write(indexes.get_index());
+    fts::IndexWriter_I* writer = nullptr;
+    if (parse_cmd_line.count("bin"))
+    {
+        writer = new fts::BinIndexWriter(index_path, config);
+    }
+    else
+    {
+        writer = new fts::TextIndexWriter(index_path, config);
+    }
+    writer->write(indexes.get_index());
+    delete writer;
 }
 
 static void search(const cxxopts::ParseResult& parse_cmd_line)
