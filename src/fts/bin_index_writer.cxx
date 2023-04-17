@@ -7,13 +7,28 @@
 
 namespace fts {
 
+static void serialize_data(const fts::BinaryBuffer& data, const std::string& temp)
+{
+    const std::string& index_filename = temp;
+
+    std::ofstream index_file;
+    index_file.open(index_filename, std::ios::out | std::ios::binary);
+
+    if (!index_file.is_open())
+    {
+        throw std::runtime_error{"Can't open file in BinIndexWriter::write function"};
+    }
+
+    index_file.write(data.get_data().data(), static_cast<long>(data.get_data().size()));
+    index_file.close();
+}
+
 void BinIndexWriter::write(const fts::Index& index) const
 {
-    const std::string index_filename = "index/index.txt";
-
     fts::config_serialize(index_dir_path, config);
 
     fts::BinaryBuffer docs_data;
+    fts::BinaryBuffer entries_data;
 
     std::unordered_map<uint32_t, uint32_t> id_to_offset;
 
@@ -30,16 +45,31 @@ void BinIndexWriter::write(const fts::Index& index) const
         docs_data.write(title);
     }
 
-    std::ofstream index_file;
-    index_file.open(index_filename, std::ios::out | std::ios::binary);
-
-    if (!index_file.is_open())
+    for (const auto& [term_hash, terms] : index.entries)
     {
-        throw std::runtime_error{"Can't open file in BinIndexWriter::write function"};
+        for (const auto& [term, docs] : terms)
+        {
+            uint32_t doc_count = docs.size();
+            entries_data.write(doc_count);
+
+            for (const auto& [doc_id, term_positions] : docs)
+            {
+                entries_data.write(id_to_offset.at(doc_id));
+
+                uint32_t pos_count = term_positions.size();
+                entries_data.write(pos_count);
+
+                for (const auto& term_position : term_positions)
+                {
+                    uint32_t pos = term_position;
+                    entries_data.write(pos);
+                }
+            }
+        }
     }
 
-    index_file.write(docs_data.get_data().data(), static_cast<long>(docs_data.get_data().size()));
-    index_file.close();
+    serialize_data(docs_data, "index/docs.txt");
+    serialize_data(entries_data, "index/entries.txt");
 }
 
 }  // namespace fts
