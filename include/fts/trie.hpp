@@ -14,7 +14,7 @@ struct TrieNode
 
 class Trie
 {
-    fts::TrieNode root;
+    std::unique_ptr<fts::TrieNode> root = std::make_unique<fts::TrieNode>();
 
    public:
     void add(const std::string& word, uint32_t offset);
