@@ -1,5 +1,6 @@
 #include <fts/bin_index_writer.hpp>
 #include <fts/binary_buffer.hpp>
+#include <fts/trie.hpp>
 #include <vector>
 #include <unordered_map>
 #include <fstream>
@@ -31,6 +32,7 @@ void BinIndexWriter::write(const fts::Index& index) const
 
     fts::BinaryBuffer docs_data{sizeof(uint32_t) * index.docs.size()};
     fts::BinaryBuffer entries_data{hash_len * index.entries.size()};
+    fts::Trie dictionary;
 
     std::unordered_map<uint32_t, uint32_t> id_to_offset;
 
@@ -49,6 +51,8 @@ void BinIndexWriter::write(const fts::Index& index) const
         for (const auto& [term, docs] : terms)
         {
             entries_data.write(static_cast<uint32_t>(docs.size()));
+
+            dictionary.add(term, static_cast<uint32_t>(entries_data.get_data().size()));
 
             for (const auto& [doc_id, term_positions] : docs)
             {
