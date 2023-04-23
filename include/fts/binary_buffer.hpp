@@ -3,6 +3,7 @@
 #include <variant>
 #include <cstdint>
 #include <string>
+#include <fstream>
 
 namespace fts {
 
@@ -51,20 +52,9 @@ class BinaryBuffer
             reinterpret_cast<char*>(&new_data) + sizeof(new_data));
     }
 
-    void serialize(const std::string& filename) const
+    void serialize(std::ostream& file) const
     {
-        const std::string& index_filename = filename;
-
-        std::ofstream index_file;
-        index_file.open(index_filename, std::ios::out | std::ios::binary);
-
-        if (!index_file.is_open())
-        {
-            throw std::runtime_error{"Can't open file in BinIndexWriter::write function"};
-        }
-
-        index_file.write(data.data(), static_cast<long>(data.size()));
-        index_file.close();
+        file.write(data.data(), static_cast<long>(data.size()));
     }
 };
 
