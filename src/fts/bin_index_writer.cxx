@@ -8,22 +8,6 @@
 
 namespace fts {
 
-static void serialize_data(const fts::BinaryBuffer& data, const std::string& temp)
-{
-    const std::string& index_filename = temp;
-
-    std::ofstream index_file;
-    index_file.open(index_filename, std::ios::out | std::ios::binary);
-
-    if (!index_file.is_open())
-    {
-        throw std::runtime_error{"Can't open file in BinIndexWriter::write function"};
-    }
-
-    index_file.write(data.get_data().data(), static_cast<long>(data.get_data().size()));
-    index_file.close();
-}
-
 void BinIndexWriter::write(const fts::Index& index) const
 {
     constexpr short hash_len = 6;
@@ -67,8 +51,8 @@ void BinIndexWriter::write(const fts::Index& index) const
         }
     }
 
-    serialize_data(docs_data, "index/docs.txt");
-    serialize_data(entries_data, "index/entries.txt");
+    docs_data.serialize("index/docs.txt");
+    entries_data.serialize("index/entries.txt");
 }
 
 }  // namespace fts
