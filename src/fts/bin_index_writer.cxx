@@ -1,7 +1,6 @@
 #include <fts/bin_index_writer.hpp>
 #include <fts/binary_buffer.hpp>
 #include <fts/trie.hpp>
-#include <vector>
 #include <unordered_map>
 #include <fstream>
 #include <string>
