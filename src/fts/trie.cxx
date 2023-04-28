@@ -24,19 +24,17 @@ void Trie::add(const std::string& word, uint32_t offset)
     curr_node->entry_offset = offset;
 }
 
-static uint32_t calc_offset(fts::TrieNode& node)
+static uint32_t calc_offset(const fts::TrieNode& node)
 {
     return node.node_pos_offset + sizeof(uint32_t) + node.childs.size() + sizeof(uint32_t) * node.childs.size()
         + sizeof(bool) + static_cast<uint32_t>(node.is_leaf * sizeof(uint32_t));
 }
 
-void Trie::serialize(std::ostream& file) const
+static void store_nodes_in_order(std::queue<fts::TrieNode*>& nodes, fts::TrieNode* root)
 {
-    fts::BinaryBuffer b_data;
-    std::queue<fts::TrieNode*> nodes;
     std::stack<std::stack<fts::TrieNode*>> childs_stack;
 
-    nodes.emplace(root.get());
+    nodes.emplace(root);
 
     while (!childs_stack.empty() || !nodes.back()->childs.empty())
     {
@@ -49,7 +47,7 @@ void Trie::serialize(std::ostream& file) const
             }
         }
 
-        childs_stack.top().top()->node_pos_offset = calc_offset(*nodes.back());
+        childs_stack.top().top()->node_pos_offset = fts::calc_offset(*nodes.back());
         nodes.emplace(childs_stack.top().top());
         childs_stack.top().pop();
 
@@ -58,6 +56,14 @@ void Trie::serialize(std::ostream& file) const
             childs_stack.pop();
         }
     }
+}
+
+void Trie::serialize(std::ostream& file) const
+{
+    fts::BinaryBuffer b_data;
+    std::queue<fts::TrieNode*> nodes;
+
+    fts::store_nodes_in_order(nodes, root.get());
 
     file.clear();
 }
