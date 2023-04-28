@@ -72,6 +72,7 @@ void BinIndexWriter::write(const fts::Index& index) const
         throw std::runtime_error{"Can't open file in BinIndexWriter::write function"};
     }
 
+    dictionary.serialize(index_file);
     entries_data.serialize(index_file);
     docs_data.serialize(index_file);
 

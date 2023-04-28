@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
+#include <fstream>
 
 namespace fts {
 
@@ -10,6 +11,7 @@ struct TrieNode
     bool is_leaf = false;
     std::unordered_map<char, std::unique_ptr<fts::TrieNode>> childs;
     uint32_t entry_offset;
+    uint32_t node_pos_offset;
 };
 
 class Trie
@@ -19,7 +21,7 @@ class Trie
    public:
     void add(const std::string& word, uint32_t offset);
 
-    // void serialize(const std::string& filename) const;
+    void serialize(std::ostream& file) const;
 };
 
 }  // namespace fts
