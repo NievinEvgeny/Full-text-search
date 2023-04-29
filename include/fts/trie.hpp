@@ -1,4 +1,5 @@
 #pragma once
+#include <fts/binary_buffer.hpp>
 #include <string>
 #include <unordered_map>
 #include <memory>
@@ -21,7 +22,7 @@ class Trie
    public:
     void add(const std::string& word, uint32_t offset);
 
-    void serialize(std::ostream& file) const;
+    void serialize(fts::BinaryBuffer& b_data) const;
 };
 
 }  // namespace fts

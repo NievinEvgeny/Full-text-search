@@ -26,9 +26,14 @@ static umap store_dir_index(const fts::Index& index, fts::BinaryBuffer& docs_dat
     return id_to_offset;
 }
 
-static void
-store_inv_index(const fts::Index& index, umap& id_to_offset, fts::BinaryBuffer& entries_data, fts::Trie& dictionary)
+static void store_inv_index(
+    const fts::Index& index,
+    umap& id_to_offset,
+    fts::BinaryBuffer& entries_data,
+    fts::BinaryBuffer& dictionary_data)
 {
+    fts::Trie dictionary;
+
     for (const auto& [term_hash, terms] : index.entries)
     {
         for (const auto& [term, docs] : terms)
@@ -49,20 +54,25 @@ store_inv_index(const fts::Index& index, umap& id_to_offset, fts::BinaryBuffer& 
             }
         }
     }
+
+    dictionary.serialize(dictionary_data);
 }
 
 void BinIndexWriter::write(const fts::Index& index) const
 {
     constexpr short hash_len = 6;
+
     const std::string index_filename = index_dir_path + "/index.txt";
 
     fts::BinaryBuffer docs_data{sizeof(uint32_t) * index.docs.size()};
     fts::BinaryBuffer entries_data{hash_len * index.entries.size()};
-    fts::Trie dictionary;
+    fts::BinaryBuffer dictionary_data;
 
     fts::config_serialize(index_dir_path, config);
     umap id_to_offset = fts::store_dir_index(index, docs_data);
-    fts::store_inv_index(index, id_to_offset, entries_data, dictionary);
+    fts::store_inv_index(index, id_to_offset, entries_data, dictionary_data);
+
+    // TODO (store header)
 
     std::ofstream index_file;
     index_file.open(index_filename, std::ios::out | std::ios::binary);
@@ -72,7 +82,7 @@ void BinIndexWriter::write(const fts::Index& index) const
         throw std::runtime_error{"Can't open file in BinIndexWriter::write function"};
     }
 
-    dictionary.serialize(index_file);
+    dictionary_data.serialize(index_file);
     entries_data.serialize(index_file);
     docs_data.serialize(index_file);
 

@@ -58,14 +58,40 @@ static void store_nodes_in_order(std::queue<fts::TrieNode*>& nodes, fts::TrieNod
     }
 }
 
-void Trie::serialize(std::ostream& file) const
+static void write_to_bin_buf(std::queue<fts::TrieNode*> nodes, fts::BinaryBuffer& b_data)
 {
-    fts::BinaryBuffer b_data;
+    while (!nodes.empty())
+    {
+        b_data.write(static_cast<uint32_t>(nodes.front()->childs.size()));
+
+        for (auto& [letter, child] : nodes.front()->childs)
+        {
+            char ch = letter;
+            b_data.write(ch);
+        }
+
+        for (const auto& [letter, child] : nodes.front()->childs)
+        {
+            b_data.write(child->node_pos_offset);
+        }
+
+        b_data.write(nodes.front()->is_leaf);
+
+        if (nodes.front()->is_leaf)
+        {
+            b_data.write(nodes.front()->entry_offset);
+        }
+
+        nodes.pop();
+    }
+}
+
+void Trie::serialize(fts::BinaryBuffer& b_data) const
+{
     std::queue<fts::TrieNode*> nodes;
 
     fts::store_nodes_in_order(nodes, root.get());
-
-    file.clear();
+    fts::write_to_bin_buf(nodes, b_data);
 }
 
 }  // namespace fts
