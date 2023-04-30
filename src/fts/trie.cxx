@@ -30,9 +30,10 @@ static uint32_t calc_offset(const fts::TrieNode& node)
         + sizeof(bool) + static_cast<uint32_t>(node.is_leaf * sizeof(uint32_t));
 }
 
-static void store_nodes_in_order(std::queue<fts::TrieNode*>& nodes, fts::TrieNode* root)
+static std::queue<fts::TrieNode*> store_nodes_in_order(fts::TrieNode* root)
 {
     std::stack<std::stack<fts::TrieNode*>> childs_stack;
+    std::queue<fts::TrieNode*> nodes;
 
     nodes.emplace(root);
 
@@ -56,6 +57,8 @@ static void store_nodes_in_order(std::queue<fts::TrieNode*>& nodes, fts::TrieNod
             childs_stack.pop();
         }
     }
+
+    return nodes;
 }
 
 static void write_to_bin_buf(std::queue<fts::TrieNode*> nodes, fts::BinaryBuffer& b_data)
@@ -89,7 +92,7 @@ void Trie::serialize(fts::BinaryBuffer& b_data) const
 {
     std::queue<fts::TrieNode*> nodes;
 
-    fts::store_nodes_in_order(nodes, root.get());
+    nodes = fts::store_nodes_in_order(root.get());
     fts::write_to_bin_buf(nodes, b_data);
 }
 
