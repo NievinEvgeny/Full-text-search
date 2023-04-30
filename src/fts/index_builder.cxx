@@ -39,10 +39,10 @@ void IndexBuilder::parse_csv(const std::string& filename)
     const std::string book_id_col = "bookID";
     const std::string book_title_col = "title";
 
-    const size_t col_index_book_id = csv_doc.GetColumnIdx(book_id_col);
+    const std::size_t col_index_book_id = csv_doc.GetColumnIdx(book_id_col);
     std::vector<int> book_ids = csv_doc.GetColumn<int>(col_index_book_id);
 
-    for (size_t i = 0; i < book_ids.size(); i++)
+    for (std::size_t i = 0; i < book_ids.size(); i++)
     {
         add_document(book_ids.at(i), csv_doc.GetCell<std::string>(book_title_col, i));
     }

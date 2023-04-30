@@ -8,7 +8,6 @@ namespace fts {
 struct TermInfo
 {
     int doc_id;
-
     int term_frequency;
 };
 

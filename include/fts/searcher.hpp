@@ -8,14 +8,12 @@ namespace fts {
 struct DocScore
 {
     int doc_id;
-
     double score;
 };
 
 struct SearchInfo
 {
     const std::vector<fts::DocScore> docs_scores;
-
     const std::size_t num_of_terms;
 };
 

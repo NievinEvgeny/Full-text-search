@@ -55,21 +55,24 @@ void Searcher::print_scores(const fts::SearchInfo& search_info)
 
     for (const auto& range : ranges)
     {
-        constexpr size_t terms_max_num = 20;
-        const size_t terms_num = std::min(search_info.num_of_terms, terms_max_num);
+        constexpr std::size_t terms_max_num = 20;
+        const std::size_t terms_num = std::min(search_info.num_of_terms, terms_max_num);
 
         const double min_score
-            = static_cast<double>(terms_num) * ((std::log(static_cast<double>(accessor.total_docs()) / range)));
+            = static_cast<double>(terms_num) * std::log(static_cast<double>(accessor.total_docs()) / range);
 
-        if (search_info.docs_scores.at(0).score > min_score)
+        if (search_info.docs_scores.at(0).score < min_score)
         {
-            for (size_t i = 0;
-                 search_info.docs_scores.at(i).score > min_score && i < search_info.docs_scores.size() - 1;
-                 i++)
-            {
-                std::cout << search_info.docs_scores.at(i).doc_id << ' ' << search_info.docs_scores.at(i).score << '\n';
-            }
+            continue;
+        }
 
+        for (const auto& doc : search_info.docs_scores)
+        {
+            if (doc.score > min_score)
+            {
+                std::cout << doc.doc_id << ' ' << doc.score << '\n';
+                continue;
+            }
             return;
         }
     }
