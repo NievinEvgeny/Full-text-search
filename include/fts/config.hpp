@@ -9,8 +9,8 @@ namespace fts {
 struct ConfOptions
 {
     std::unordered_set<std::string> stop_words;
-    int ngram_min_len;
-    int ngram_max_len;
+    std::size_t ngram_min_len;
+    std::size_t ngram_max_len;
 };
 
 void to_json(nlohmann::json& j, const fts::ConfOptions& conf);
