@@ -38,9 +38,7 @@ std::vector<fts::TermInfo> TextIndexAccessor::get_term_infos(const std::string& 
 {
     const std::string word_hash = fts::get_word_hash(term);
 
-    constexpr std::size_t min_capacity_term_infos = 5;
     std::vector<fts::TermInfo> term_infos;
-    term_infos.reserve(min_capacity_term_infos);
 
     std::ifstream entrie_doc(index_path + "/entries/" += word_hash);
 
@@ -68,7 +66,7 @@ std::vector<fts::TermInfo> TextIndexAccessor::get_term_infos(const std::string& 
             int term_freq = std::stoi(*iter);
             iter += term_freq;
 
-            term_infos.push_back({doc_id, term_freq});
+            term_infos.emplace_back(fts::TermInfo{doc_id, term_freq});
         }
 
         break;

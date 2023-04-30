@@ -36,14 +36,12 @@ fts::SearchInfo Searcher::score_calc(const std::string& query)
 
     for (const auto& [doc_id, score] : doc_scores_map)
     {
-        doc_scores.push_back({doc_id, score});
+        doc_scores.emplace_back(fts::DocScore{doc_id, score});
     }
 
     score_sort(doc_scores);
 
-    fts::SearchInfo search_info{doc_scores, ngrams.size()};
-
-    return search_info;
+    return fts::SearchInfo{doc_scores, ngrams.size()};
 }
 
 void Searcher::print_scores(const fts::SearchInfo& search_info)

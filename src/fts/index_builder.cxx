@@ -21,7 +21,7 @@ void IndexBuilder::add_document(int document_id, const std::string& text)
     for (const auto& ngram : ngrams)
     {
         std::string word_hash = fts::get_word_hash(ngram.word);
-        index.entries[word_hash][ngram.word][document_id].push_back(ngram.index);
+        index.entries[word_hash][ngram.word][document_id].emplace_back(ngram.index);
     }
 }
 
