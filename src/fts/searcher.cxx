@@ -53,15 +53,14 @@ void Searcher::print_scores(const fts::SearchInfo& search_info)
         return;
     }
 
-    const int num_of_ranges = 3;
-    const std::array<int, num_of_ranges> ranges{30, 150, 350};
+    const std::vector<int> ranges{30, 150, 350};
 
     for (const auto& range : ranges)
     {
-        const size_t terms_max_num = 20;
+        constexpr size_t terms_max_num = 20;
         const size_t terms_num = std::min(search_info.num_of_terms, terms_max_num);
 
-        double min_score
+        const double min_score
             = static_cast<double>(terms_num) * ((std::log(static_cast<double>(accessor.total_docs()) / range)));
 
         if (search_info.docs_scores.at(0).score > min_score)
@@ -72,6 +71,7 @@ void Searcher::print_scores(const fts::SearchInfo& search_info)
             {
                 std::cout << search_info.docs_scores.at(i).doc_id << ' ' << search_info.docs_scores.at(i).score << '\n';
             }
+
             return;
         }
     }

@@ -38,7 +38,7 @@ std::vector<fts::TermInfo> TextIndexAccessor::get_term_infos(const std::string& 
 {
     const std::string word_hash = fts::get_word_hash(term);
 
-    const std::size_t min_capacity_term_infos = 5;
+    constexpr std::size_t min_capacity_term_infos = 5;
     std::vector<fts::TermInfo> term_infos;
     term_infos.reserve(min_capacity_term_infos);
 
@@ -73,6 +73,7 @@ std::vector<fts::TermInfo> TextIndexAccessor::get_term_infos(const std::string& 
 
         break;
     }
+
     entrie_doc.close();
     return term_infos;
 }

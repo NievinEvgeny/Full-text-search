@@ -14,9 +14,9 @@ struct DocScore
 
 struct SearchInfo
 {
-    std::vector<fts::DocScore> docs_scores;
+    const std::vector<fts::DocScore> docs_scores;
 
-    std::size_t num_of_terms;
+    const std::size_t num_of_terms;
 };
 
 class Searcher

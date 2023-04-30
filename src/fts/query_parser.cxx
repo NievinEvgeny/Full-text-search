@@ -52,6 +52,7 @@ static std::vector<fts::Ngram> ngram_generate(const std::vector<std::string>& te
             fts::Ngram temp_ngram{index, text_token.substr(0, j)};
             ngrams.push_back(temp_ngram);
         }
+
         index++;
     }
 

@@ -28,6 +28,11 @@ class BinaryBuffer
         std::move(new_data.begin(), new_data.end(), std::back_inserter(data));
     }
 
+    void write(char new_data)
+    {
+        data.emplace_back(new_data);
+    }
+
     template <class T>
     void write(T&& new_data)
     {
@@ -40,6 +45,11 @@ class BinaryBuffer
     void write_to(const std::string& new_data, long offset)
     {
         data.insert(data.begin() + offset, new_data.begin(), new_data.end());
+    }
+
+    void write_to(char new_data, long offset)
+    {
+        data.emplace(data.begin() + offset, new_data);
     }
 
     template <class T>

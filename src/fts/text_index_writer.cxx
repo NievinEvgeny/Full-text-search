@@ -19,7 +19,6 @@ static void docs_serialize_text(const std::string& index_dir_path, const fts::In
         }
 
         current_doc << text;
-
         current_doc.close();
     }
 }

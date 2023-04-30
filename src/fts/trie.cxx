@@ -64,10 +64,9 @@ static void write_to_bin_buf(std::queue<fts::TrieNode*> nodes, fts::BinaryBuffer
     {
         b_data.write(static_cast<uint32_t>(nodes.front()->childs.size()));
 
-        for (auto& [letter, child] : nodes.front()->childs)
+        for (const auto& [letter, child] : nodes.front()->childs)
         {
-            char ch = letter;
-            b_data.write(ch);
+            b_data.write(letter);
         }
 
         for (const auto& [letter, child] : nodes.front()->childs)
