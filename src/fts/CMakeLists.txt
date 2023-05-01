@@ -5,18 +5,19 @@ add_library(${target_name} STATIC
     ${PROJECT_SOURCE_DIR}/include/fts/config.hpp
     query_parser.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/query_parser.hpp
-    index_accessor.cxx
-    ${PROJECT_SOURCE_DIR}/include/fts/index_accessor.hpp
+    text_index_accessor.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/i_index_accessor.hpp
+    ${PROJECT_SOURCE_DIR}/include/fts/text_index_accessor.hpp
     index_builder.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/index_builder.hpp
-    ${PROJECT_SOURCE_DIR}/include/fts/interface_index_writer.hpp
     text_index_writer.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/i_index_writer.hpp
     ${PROJECT_SOURCE_DIR}/include/fts/text_index_writer.hpp
     bin_index_writer.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/bin_index_writer.hpp
     trie.cxx
-    ${PROJECT_SOURCE_DIR}/include/fts/trie.hpp
     ${PROJECT_SOURCE_DIR}/include/fts/binary_buffer.hpp
+    ${PROJECT_SOURCE_DIR}/include/fts/trie.hpp
     searcher.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/searcher.hpp
     replxx_wrapper.cxx

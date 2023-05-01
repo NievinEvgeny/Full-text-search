@@ -1,5 +1,5 @@
 #pragma once
-#include <fts/index_accessor.hpp>
+#include <fts/i_index_accessor.hpp>
 #include <string>
 #include <vector>
 
@@ -19,14 +19,14 @@ struct SearchInfo
 
 class Searcher
 {
-    fts::IndexAccessor& accessor;
+    fts::IndexAccessor_I& accessor;
 
    public:
-    explicit Searcher(fts::IndexAccessor& access) : accessor(access)
+    explicit Searcher(fts::IndexAccessor_I& access) : accessor(access)
     {
     }
 
-    void set_accessor(fts::IndexAccessor& new_access)
+    void set_accessor(fts::IndexAccessor_I& new_access)
     {
         accessor = new_access;
     }

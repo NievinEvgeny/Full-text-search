@@ -1,5 +1,5 @@
 #include <fts/config.hpp>
-#include <fts/index_accessor.hpp>
+#include <fts/text_index_accessor.hpp>
 #include <fts/index_builder.hpp>
 #include <fts/text_index_writer.hpp>
 #include <fts/bin_index_writer.hpp>

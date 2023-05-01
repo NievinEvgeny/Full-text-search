@@ -1,4 +1,4 @@
-#include <fts/index_accessor.hpp>
+#include <fts/text_index_accessor.hpp>
 #include <fts/word_hash.hpp>
 #include <fts/query_parser.hpp>
 #include <filesystem>

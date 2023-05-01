@@ -1,7 +1,7 @@
 #pragma once
 #include <fts/config.hpp>
 #include <fts/index_builder.hpp>
-#include <fts/interface_index_writer.hpp>
+#include <fts/i_index_writer.hpp>
 #include <string>
 
 namespace fts {

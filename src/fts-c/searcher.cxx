@@ -3,13 +3,13 @@
 #include <fts-c/index_accessor.h>
 #include <fts-c/searcher.h>
 #include <fts/searcher.hpp>
-#include <fts/index_accessor.hpp>
+#include <fts/i_index_accessor.hpp>
 #include <string>
 #include <vector>
 
 void searcher_set_accessor(Searcher* self, IndexAccessor* new_accessor)
 {
-    auto* index_accessor = reinterpret_cast<fts::IndexAccessor*>(new_accessor);
+    auto* index_accessor = reinterpret_cast<fts::IndexAccessor_I*>(new_accessor);
     auto* searcher = reinterpret_cast<fts::Searcher*>(self);
     searcher->set_accessor(*index_accessor);
 }
@@ -57,6 +57,6 @@ void searcher_delete(Searcher* self)
 
 Searcher* searcher_new(IndexAccessor* accessor)
 {
-    auto* index_accessor = reinterpret_cast<fts::IndexAccessor*>(accessor);
+    auto* index_accessor = reinterpret_cast<fts::IndexAccessor_I*>(accessor);
     return reinterpret_cast<Searcher*>(static_cast<fts::Searcher*>(new fts::Searcher(*index_accessor)));
 }
