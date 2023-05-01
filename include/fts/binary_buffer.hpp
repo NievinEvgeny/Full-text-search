@@ -25,6 +25,7 @@ class BinaryBuffer
 
     void write(const std::string& new_data)
     {
+        write(static_cast<uint8_t>(new_data.size() + 1));
         std::move(new_data.begin(), new_data.end(), std::back_inserter(data));
     }
 

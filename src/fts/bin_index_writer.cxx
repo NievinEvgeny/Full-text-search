@@ -2,6 +2,7 @@
 #include <fts/binary_buffer.hpp>
 #include <fts/trie.hpp>
 #include <unordered_map>
+#include <vector>
 #include <fstream>
 #include <string>
 
@@ -19,7 +20,6 @@ static umap store_dir_index(const fts::Index& index, fts::BinaryBuffer& docs_dat
     {
         id_to_offset[id] = docs_data.get_data().size();
 
-        docs_data.write(static_cast<uint8_t>(title.size() + 1));
         docs_data.write(title);
     }
 
@@ -58,6 +58,41 @@ static void store_inv_index(
     dictionary.serialize(dictionary_data);
 }
 
+static uint32_t calc_header_size(const std::vector<std::pair<const std::string, uint32_t>>& section_names)
+{
+    uint32_t header_size = 0;
+
+    header_size += sizeof(uint8_t) + section_names.size() * sizeof(uint32_t);
+
+    for (const auto& [name, offset] : section_names)
+    {
+        header_size += name.size() + 1;
+    }
+
+    return header_size;
+}
+
+static fts::BinaryBuffer store_header(uint32_t dictionary_size, uint32_t entries_size)
+{
+    std::vector<std::pair<const std::string, uint32_t>> sections{
+        {"dictionary", 0}, {"entries", dictionary_size}, {"docs", dictionary_size + entries_size}};
+
+    const uint32_t header_size = calc_header_size(sections);
+
+    fts::BinaryBuffer header{header_size};
+
+    header.write(static_cast<uint8_t>(sections.size()));
+
+    for (auto& section : sections)
+    {
+        section.second += header_size;
+        header.write(section.first);
+        header.write(section.second);
+    }
+
+    return header;
+}
+
 void BinIndexWriter::write(const fts::Index& index) const
 {
     constexpr short hash_len = 6;
@@ -72,7 +107,7 @@ void BinIndexWriter::write(const fts::Index& index) const
     umap id_to_offset = fts::store_dir_index(index, docs_data);
     fts::store_inv_index(index, id_to_offset, entries_data, dictionary_data);
 
-    // TODO (store header)
+    fts::BinaryBuffer header = store_header(dictionary_data.get_data().size(), entries_data.get_data().size());
 
     std::ofstream index_file;
     index_file.open(index_filename, std::ios::out | std::ios::binary);
@@ -82,6 +117,7 @@ void BinIndexWriter::write(const fts::Index& index) const
         throw std::runtime_error{"Can't open file in BinIndexWriter::write function"};
     }
 
+    header.serialize(index_file);
     dictionary_data.serialize(index_file);
     entries_data.serialize(index_file);
     docs_data.serialize(index_file);
