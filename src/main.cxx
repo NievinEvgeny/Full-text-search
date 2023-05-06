@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <filesystem>
 #include <vector>
+#include <memory>
 
 static void check_index_dirs(const cxxopts::ParseResult& parse_cmd_line)
 {
@@ -55,17 +56,16 @@ static void build_index(const cxxopts::ParseResult& parse_cmd_line)
     const std::string csv_filename = parse_cmd_line["csv"].as<std::string>();
     indexes.parse_csv(csv_filename);
 
-    fts::IndexWriter_I* writer = nullptr;
+    std::shared_ptr<fts::IndexWriter_I> writer = nullptr;
     if (parse_cmd_line.count("bin"))
     {
-        writer = new fts::BinIndexWriter(index_path, config);
+        writer = std::make_shared<fts::BinIndexWriter>(index_path, config);
     }
     else
     {
-        writer = new fts::TextIndexWriter(index_path, config);
+        writer = std::make_shared<fts::TextIndexWriter>(index_path, config);
     }
     writer->write(indexes.get_index());
-    delete writer;
 }
 
 static void search(const cxxopts::ParseResult& parse_cmd_line)
