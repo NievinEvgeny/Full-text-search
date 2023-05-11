@@ -10,13 +10,31 @@ namespace fts {
 uint32_t DictionaryAccessor::retrieve(const std::string& word) const noexcept
 {
     // TODO
-    return 1;
+    return 0;
 }
 
-std::vector<fts::TermInfo> EntriesAccessor::get_term_infos(std::size_t offset) const noexcept
+std::vector<fts::TermInfo> EntriesAccessor::get_term_infos(std::size_t entry_offset) const noexcept
 {
-    // TODO
-    return std::vector<fts::TermInfo>{{1, 2}, {3, 4}};
+    fts::BinaryReader curr_data{data + entry_offset};
+
+    std::vector<fts::TermInfo> term_infos;
+
+    uint32_t docs_num = 0;
+    curr_data.read(&docs_num, sizeof(docs_num));
+
+    for (uint32_t i = 0; i < docs_num; i++)
+    {
+        uint32_t doc_id = 0;
+        curr_data.read(&doc_id, sizeof(doc_id));
+
+        uint32_t term_freq = 0;
+        curr_data.read(&term_freq, sizeof(term_freq));
+        curr_data.ptr_shift(term_freq * sizeof(uint32_t));
+
+        term_infos.emplace_back(fts::TermInfo{doc_id, term_freq});
+    }
+
+    return term_infos;
 }
 
 std::size_t DocumentsAccessor::total_docs() const noexcept
@@ -28,9 +46,9 @@ std::size_t DocumentsAccessor::total_docs() const noexcept
     return docs_num;
 }
 
-std::string DocumentsAccessor::load_document(std::size_t offset) const noexcept
+std::string DocumentsAccessor::load_document(std::size_t book_offset) const noexcept
 {
-    fts::BinaryReader curr_data{data + offset};
+    fts::BinaryReader curr_data{data + book_offset};
 
     uint8_t size_book_name = 0;
     curr_data.read(&size_book_name, sizeof(size_book_name));
