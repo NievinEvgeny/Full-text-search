@@ -7,7 +7,7 @@
 namespace fts {
 
 using Pos = int;
-using DocId = int;
+using DocId = uint32_t;
 using TermPositions = std::vector<Pos>;
 using IdToPositions = std::unordered_map<DocId, TermPositions>;
 using Term = std::string;
@@ -41,7 +41,7 @@ class IndexBuilder
         return index;
     }
 
-    void add_document(int document_id, const std::string& text);
+    void add_document(uint32_t document_id, const std::string& text);
 
     void parse_csv(const std::string& filename);
 };

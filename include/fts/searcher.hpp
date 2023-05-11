@@ -7,7 +7,7 @@ namespace fts {
 
 struct DocScore
 {
-    int doc_id;
+    uint32_t doc_id;
     double score;
 };
 

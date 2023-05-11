@@ -34,7 +34,7 @@ class TextIndexAccessor : public IndexAccessor_I
         return num_of_docs;
     }
 
-    std::string load_document(int document_id) const override;
+    std::string load_document(uint32_t document_id) const override;
 
     std::vector<fts::TermInfo> get_term_infos(const std::string& term) const override;
 };

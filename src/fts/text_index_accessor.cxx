@@ -16,7 +16,7 @@ std::size_t TextIndexAccessor::find_num_of_docs(const std::string& index_dir_nam
         [&](const std::filesystem::directory_entry& path) { return path.is_regular_file(); });
 }
 
-std::string TextIndexAccessor::load_document(int document_id) const
+std::string TextIndexAccessor::load_document(uint32_t document_id) const
 {
     const std::string string_doc_id = std::to_string(document_id);
 
@@ -60,10 +60,10 @@ std::vector<fts::TermInfo> TextIndexAccessor::get_term_infos(const std::string& 
 
         for (auto iter = line_tokens.begin() + 2; iter != line_tokens.end(); iter++)
         {
-            int doc_id = std::stoi(*iter);
+            uint32_t doc_id = std::stoul(*iter);
             iter++;
 
-            int term_freq = std::stoi(*iter);
+            uint32_t term_freq = std::stoul(*iter);
             iter += term_freq;
 
             term_infos.emplace_back(fts::TermInfo{doc_id, term_freq});

@@ -76,7 +76,7 @@ class BinIndexAccessor : public IndexAccessor_I
         return docs.total_docs();
     }
 
-    std::string load_document(int document_offset) const override
+    std::string load_document(uint32_t document_offset) const override
     {
         return docs.load_document(document_offset);
     }

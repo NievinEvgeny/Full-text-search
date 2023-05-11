@@ -16,7 +16,7 @@ static void score_sort(std::vector<fts::DocScore>& doc_scores)
 
 fts::SearchInfo Searcher::score_calc(const std::string& query)
 {
-    std::unordered_map<int, double> doc_scores_map;
+    std::unordered_map<uint32_t, double> doc_scores_map;
 
     const std::vector<fts::Ngram> ngrams = parse_query(accessor.get_config(), query);
 

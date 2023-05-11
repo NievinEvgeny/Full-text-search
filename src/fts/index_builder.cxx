@@ -7,7 +7,7 @@
 
 namespace fts {
 
-void IndexBuilder::add_document(int document_id, const std::string& text)
+void IndexBuilder::add_document(uint32_t document_id, const std::string& text)
 {
     const std::vector<fts::Ngram> ngrams = fts::parse_query(config, text);
 
