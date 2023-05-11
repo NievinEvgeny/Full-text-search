@@ -70,7 +70,7 @@ void Searcher::print_scores(const fts::SearchInfo& search_info)
         {
             if (doc.score > min_score)
             {
-                std::cout << doc.doc_id << ' ' << doc.score << '\n';
+                std::cout << doc.score << ' ' << accessor.load_document(doc.doc_id) << '\n';
                 continue;
             }
             return;

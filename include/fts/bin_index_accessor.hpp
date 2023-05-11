@@ -76,9 +76,9 @@ class BinIndexAccessor : public IndexAccessor_I
         return docs.total_docs();
     }
 
-    std::string load_document(int document_id) const override
+    std::string load_document(int document_offset) const override
     {
-        return docs.load_document(document_id);
+        return docs.load_document(document_offset);
     }
 
     std::vector<fts::TermInfo> get_term_infos(const std::string& term) const override
