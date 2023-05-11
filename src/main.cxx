@@ -1,5 +1,6 @@
 #include <fts/config.hpp>
 #include <fts/text_index_accessor.hpp>
+#include <fts/bin_index_accessor.hpp>
 #include <fts/index_builder.hpp>
 #include <fts/text_index_writer.hpp>
 #include <fts/bin_index_writer.hpp>
@@ -10,6 +11,9 @@
 #include <stdexcept>
 #include <filesystem>
 #include <vector>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <memory>
 
 static void check_index_dirs(const cxxopts::ParseResult& parse_cmd_line)
@@ -57,6 +61,7 @@ static void build_index(const cxxopts::ParseResult& parse_cmd_line)
     indexes.parse_csv(csv_filename);
 
     std::shared_ptr<fts::IndexWriter_I> writer = nullptr;
+
     if (parse_cmd_line.count("bin"))
     {
         writer = std::make_shared<fts::BinIndexWriter>(index_path, config);
@@ -65,6 +70,7 @@ static void build_index(const cxxopts::ParseResult& parse_cmd_line)
     {
         writer = std::make_shared<fts::TextIndexWriter>(index_path, config);
     }
+
     writer->write(indexes.get_index());
 }
 
@@ -83,12 +89,35 @@ static void search(const cxxopts::ParseResult& parse_cmd_line)
         query = parse_cmd_line["query"].as<std::string>();
     }
 
-    fts::TextIndexAccessor index_accessor(index_path);
+    std::shared_ptr<fts::IndexAccessor_I> index_accessor = nullptr;
+    char* index_data = nullptr;
+    std::size_t index_file_size = 0;
 
-    fts::Searcher searcher(index_accessor);
+    if (parse_cmd_line.count("bin"))
+    {
+        const std::string index_filename = index_path + "/index.txt";
+        int fd = open(index_filename.c_str(), O_RDONLY | O_CLOEXEC);
+        index_file_size = std::filesystem::file_size(index_filename);
+        index_data = static_cast<char*>(mmap(nullptr, index_file_size, PROT_READ, MAP_PRIVATE, fd, 0));
+
+        index_accessor = std::make_shared<fts::BinIndexAccessor>(index_path, index_data);
+
+        close(fd);
+    }
+    else
+    {
+        index_accessor = std::make_shared<fts::TextIndexAccessor>(index_path);
+    }
+
+    fts::Searcher searcher(*index_accessor);
 
     const fts::SearchInfo result_of_search = searcher.score_calc(query);
     searcher.print_scores(result_of_search);
+
+    if (parse_cmd_line.count("bin"))
+    {
+        munmap(index_data, index_file_size);
+    }
 }
 
 int main(int argc, char** argv)

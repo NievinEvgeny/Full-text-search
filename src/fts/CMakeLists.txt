@@ -5,9 +5,12 @@ add_library(${target_name} STATIC
     ${PROJECT_SOURCE_DIR}/include/fts/config.hpp
     query_parser.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/query_parser.hpp
+    ${PROJECT_SOURCE_DIR}/include/fts/binary_reader.hpp
     text_index_accessor.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/i_index_accessor.hpp
     ${PROJECT_SOURCE_DIR}/include/fts/text_index_accessor.hpp
+    bin_index_accessor.cxx
+    ${PROJECT_SOURCE_DIR}/include/fts/bin_index_accessor.hpp
     index_builder.cxx
     ${PROJECT_SOURCE_DIR}/include/fts/index_builder.hpp
     text_index_writer.cxx

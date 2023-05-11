@@ -25,7 +25,9 @@ Checks: |
   -hicpp-exception-baseclass,
   -readability-identifier-length,
   -llvm-include-order,
-  -cppcoreguidelines-pro-type-reinterpret-cast
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-vararg,
+  -hicpp-vararg
 WarningsAsErrors: true
 HeaderFilterRegex: 'fts/'
 AnalyzeTemporaryDtors: false
