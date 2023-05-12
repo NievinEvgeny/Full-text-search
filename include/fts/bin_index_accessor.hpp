@@ -9,6 +9,12 @@
 
 namespace fts {
 
+struct EntryOffset
+{
+    bool offset_found;
+    uint32_t offset;
+};
+
 class DictionaryAccessor
 {
     const char* data;
@@ -18,7 +24,7 @@ class DictionaryAccessor
     {
     }
 
-    uint32_t retrieve(const std::string& word) const noexcept;
+    fts::EntryOffset retrieve(const std::string& word) const noexcept;
 };
 
 class EntriesAccessor
@@ -30,7 +36,7 @@ class EntriesAccessor
     {
     }
 
-    std::vector<fts::TermInfo> get_term_infos(std::size_t offset) const noexcept;
+    std::vector<fts::TermInfo> get_term_infos(fts::EntryOffset offset) const noexcept;
 };
 
 class DocumentsAccessor
@@ -55,7 +61,7 @@ class BinIndexAccessor : public IndexAccessor_I
     const fts::EntriesAccessor entries;
     const fts::DocumentsAccessor docs;
 
-    const char* find_section_offset(const char* data, const char* section_name);
+    static const char* find_section_offset(const char* data, const char* section_name);
 
    public:
     BinIndexAccessor(const std::string& index_dir_name, const char* data)

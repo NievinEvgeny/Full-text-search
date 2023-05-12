@@ -7,17 +7,87 @@
 
 namespace fts {
 
-uint32_t DictionaryAccessor::retrieve(const std::string& word) const noexcept
+fts::EntryOffset DictionaryAccessor::retrieve(const std::string& word) const noexcept
 {
-    // TODO
-    return 0;
+    bool word_found = false;
+    uint32_t entry_offset = 0;
+
+    std::string curr_word;
+    uint32_t curr_offset = 0;
+
+    for (const auto& letter : word)
+    {
+        fts::BinaryReader curr_data{data + curr_offset};
+
+        uint32_t child_count = 0;
+        curr_data.read(&child_count, sizeof(child_count));
+
+        bool letter_found = false;
+        uint32_t letter_index = 0;
+
+        for (letter_index = 0; letter_index < child_count; letter_index++)
+        {
+            char curr_child = 0;
+            curr_data.read(&curr_child, sizeof(curr_child));
+
+            if (curr_child == letter)
+            {
+                curr_word += curr_child;
+                letter_found = true;
+                break;
+            }
+        }
+
+        if (!letter_found)
+        {
+            break;
+        }
+
+        curr_data.ptr_shift(child_count - (letter_index + 1) + letter_index * sizeof(uint32_t));
+        curr_data.read(&curr_offset, sizeof(curr_offset));
+
+        if (curr_word == word)
+        {
+            word_found = true;
+            break;
+        }
+    }
+
+    if (word_found)
+    {
+        fts::BinaryReader curr_data{data + curr_offset};
+
+        uint32_t child_count = 0;
+        curr_data.read(&child_count, sizeof(child_count));
+
+        curr_data.ptr_shift(child_count + child_count * sizeof(child_count));
+
+        uint8_t is_leaf = 0;
+        curr_data.read(&is_leaf, sizeof(is_leaf));
+
+        if (is_leaf)
+        {
+            curr_data.read(&entry_offset, sizeof(entry_offset));
+        }
+        else
+        {
+            word_found = false;
+        }
+    }
+
+    return fts::EntryOffset{word_found, entry_offset};
 }
 
-std::vector<fts::TermInfo> EntriesAccessor::get_term_infos(std::size_t entry_offset) const noexcept
+std::vector<fts::TermInfo> EntriesAccessor::get_term_infos(fts::EntryOffset entry_offset) const noexcept
 {
-    fts::BinaryReader curr_data{data + entry_offset};
-
     std::vector<fts::TermInfo> term_infos;
+
+    if (!entry_offset.offset_found)
+    {
+        return term_infos;
+    }
+
+    fts::BinaryReader curr_data{data + entry_offset.offset};
 
     uint32_t docs_num = 0;
     curr_data.read(&docs_num, sizeof(docs_num));
