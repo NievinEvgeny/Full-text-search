@@ -1,7 +1,8 @@
 #pragma once
+#include <stdint.h>
 
 typedef struct
 {
-    int doc_id;
-    int term_frequency;
+    uint32_t doc_id;
+    uint32_t term_frequency;
 } TermInfo;
