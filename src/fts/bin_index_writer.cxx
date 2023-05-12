@@ -38,9 +38,9 @@ static void store_inv_index(
     {
         for (const auto& [term, docs] : terms)
         {
-            entries_data.write(static_cast<uint32_t>(docs.size()));
-
             dictionary.add(term, static_cast<uint32_t>(entries_data.get_data().size()));
+
+            entries_data.write(static_cast<uint32_t>(docs.size()));
 
             for (const auto& [doc_id, term_positions] : docs)
             {
