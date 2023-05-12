@@ -1,5 +1,5 @@
-#include <fts/conf_parser.hpp>
-#include <fts/indexer.hpp>
+#include <fts/config.hpp>
+#include <fts/index_builder.hpp>
 #include <gtest/gtest.h>
 #include <fts/word_hash.hpp>
 #include <string>

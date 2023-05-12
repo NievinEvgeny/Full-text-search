@@ -6,6 +6,7 @@ add_executable(
     fts_indexer.cxx
     fts_searcher.cxx
 )
+
 target_link_libraries(
     ${target_name}
     PRIVATE

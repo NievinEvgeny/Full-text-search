@@ -1,5 +1,5 @@
 #pragma once
-#include <fts/index_accessor.hpp>
+#include <fts/i_index_accessor.hpp>
 #include <string>
 #include <vector>
 
@@ -7,28 +7,26 @@ namespace fts {
 
 struct DocScore
 {
-    int doc_id;
-
+    uint32_t doc_id;
     double score;
 };
 
 struct SearchInfo
 {
-    std::vector<fts::DocScore> docs_scores;
-
-    std::size_t num_of_terms;
+    const std::vector<fts::DocScore> docs_scores;
+    const std::size_t num_of_terms;
 };
 
 class Searcher
 {
-    fts::IndexAccessor& accessor;
+    fts::IndexAccessor_I& accessor;
 
    public:
-    explicit Searcher(fts::IndexAccessor& access) : accessor(access)
+    explicit Searcher(fts::IndexAccessor_I& access) : accessor(access)
     {
     }
 
-    void set_accessor(fts::IndexAccessor& new_access)
+    void set_accessor(fts::IndexAccessor_I& new_access)
     {
         accessor = new_access;
     }

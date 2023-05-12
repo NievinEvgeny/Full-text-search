@@ -1,5 +1,5 @@
 #pragma once
-#include <fts/conf_parser.hpp>
+#include <fts/config.hpp>
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -7,7 +7,7 @@
 namespace fts {
 
 using Pos = int;
-using DocId = int;
+using DocId = uint32_t;
 using TermPositions = std::vector<Pos>;
 using IdToPositions = std::unordered_map<DocId, TermPositions>;
 using Term = std::string;
@@ -41,23 +41,9 @@ class IndexBuilder
         return index;
     }
 
-    void add_document(int document_id, const std::string& text);
+    void add_document(uint32_t document_id, const std::string& text);
 
     void parse_csv(const std::string& filename);
-};
-
-class TextIndexWriter
-{
-    const std::string index_dir_path;
-
-    const fts::ConfOptions config;
-
-   public:
-    TextIndexWriter(std::string path, fts::ConfOptions conf) : index_dir_path(std::move(path)), config(std::move(conf))
-    {
-    }
-
-    void write(const fts::Index& index);
 };
 
 }  // namespace fts

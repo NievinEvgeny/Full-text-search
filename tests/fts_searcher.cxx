@@ -1,7 +1,9 @@
 #include <fts/searcher.hpp>
-#include <fts/conf_parser.hpp>
+#include <fts/config.hpp>
 #include <fts/query_parser.hpp>
-#include <fts/indexer.hpp>
+#include <fts/index_builder.hpp>
+#include <fts/text_index_accessor.hpp>
+#include <fts/text_index_writer.hpp>
 #include <gtest/gtest.h>
 #include <filesystem>
 #include <cmath>
@@ -38,7 +40,7 @@ TEST(IndexAccessor, score_check_and_stability)
 
     const std::string query = "Matrix";
 
-    fts::TextIndexAccessor index_accessor(temp_dir, config);
+    fts::TextIndexAccessor index_accessor(temp_dir);
     fts::Searcher searcher(index_accessor);
     const fts::SearchInfo search_result = searcher.score_calc(query);
 
