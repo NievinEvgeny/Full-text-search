@@ -3,8 +3,6 @@
 #include <string>
 #include <vector>
 
-#include <iostream>
-
 namespace fts {
 
 fts::EntryOffset DictionaryAccessor::retrieve(const std::string& word) const noexcept
