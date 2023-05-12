@@ -13,49 +13,33 @@ fts::EntryOffset DictionaryAccessor::retrieve(const std::string& word) const noe
     uint32_t entry_offset = 0;
 
     std::string curr_word;
-    uint32_t curr_offset = 0;
+    uint32_t curr_child_offset = 0;
 
     for (const auto& letter : word)
     {
-        fts::BinaryReader curr_data{data + curr_offset};
+        fts::BinaryReader curr_data{data + curr_child_offset};
 
         uint32_t child_count = 0;
         curr_data.read(&child_count, sizeof(child_count));
 
-        bool letter_found = false;
-        uint32_t letter_index = 0;
+        const char* child_ptr = nullptr;
 
-        for (letter_index = 0; letter_index < child_count; letter_index++)
+        if ((child_ptr = std::strchr(curr_data.get(), letter)) != nullptr)
         {
-            char curr_child = 0;
-            curr_data.read(&curr_child, sizeof(curr_child));
-
-            if (curr_child == letter)
-            {
-                curr_word += curr_child;
-                letter_found = true;
-                break;
-            }
+            curr_word += letter;
         }
-
-        if (!letter_found)
+        else
         {
             break;
         }
 
-        curr_data.ptr_shift(child_count - (letter_index + 1) + letter_index * sizeof(uint32_t));
-        curr_data.read(&curr_offset, sizeof(curr_offset));
-
-        if (curr_word == word)
-        {
-            word_found = true;
-            break;
-        }
+        curr_data.ptr_shift(child_count + (child_ptr - curr_data.get()) * sizeof(uint32_t));
+        curr_data.read(&curr_child_offset, sizeof(curr_child_offset));
     }
 
-    if (word_found)
+    if (curr_word == word)
     {
-        fts::BinaryReader curr_data{data + curr_offset};
+        fts::BinaryReader curr_data{data + curr_child_offset};
 
         uint32_t child_count = 0;
         curr_data.read(&child_count, sizeof(child_count));
@@ -67,6 +51,7 @@ fts::EntryOffset DictionaryAccessor::retrieve(const std::string& word) const noe
 
         if (is_leaf)
         {
+            word_found = true;
             curr_data.read(&entry_offset, sizeof(entry_offset));
         }
         else

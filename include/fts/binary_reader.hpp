@@ -12,6 +12,11 @@ class BinaryReader
     {
     }
 
+    const char* get() const noexcept
+    {
+        return current;
+    }
+
     void ptr_shift(std::size_t shift) noexcept
     {
         current += shift;

@@ -48,6 +48,7 @@ void Searcher::print_scores(const fts::SearchInfo& search_info)
 {
     if (search_info.docs_scores.empty())
     {
+        std::cout << "Nothing was found for your query" << '\n';
         return;
     }
 
@@ -76,8 +77,6 @@ void Searcher::print_scores(const fts::SearchInfo& search_info)
             return;
         }
     }
-
-    std::cout << "Nothing was found for your query" << '\n';
 }
 
 }  // namespace fts
